@@ -29,7 +29,7 @@ authRouter.post("/register", async (req, res) => {
   const body = req.body;
   const { password } = body;
   if (!password) {
-    res.json({ data: null, error: "Password are required." });
+    res.json({ data: null, error: "Password is required." });
   }
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(password, salt);
