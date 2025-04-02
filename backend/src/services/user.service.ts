@@ -34,6 +34,13 @@ const findAll = () => {
     >("SELECT id,first_name,last_name,dob,email,address,phone,gender,created_at,updated_at FROM user;");
 };
 
+/* query user by email */
+const findOneByEmail = ({ email }: { email: string }) => {
+  return db
+    .promise()
+    .query<IUser[]>("SELECT * FROM user WHERE email = ?;", [email]);
+};
+
 /* create a user */
 const insertOne = ({ id, updated_at, ...props }: IUser) => {
   const data = { ...props, created_at: new Date() };
@@ -60,6 +67,7 @@ const deleteById = ({ id }: { id: string }) => {
 
 const userService = {
   findOneById,
+  findOneByEmail,
   findAll,
   insertOne,
   updateOne,

@@ -3,11 +3,24 @@ import { handleError } from "../utils/commons";
 
 const findOneById = async ({ id }: { id: string }) => {
   try {
-    const [user] = await userService.findOneById({ id: id });
+    const [user] = await userService.findOneById({ id });
     if (user.length) {
       return { data: user[0], error: null };
     } else {
       return { data: null, error: `No user found with id ${id}` };
+    }
+  } catch (err) {
+    return { data: null, error: handleError(err) };
+  }
+};
+
+const findOneByEmail = async ({ email }: { email: string }) => {
+  try {
+    const [user] = await userService.findOneByEmail({ email });
+    if (user.length) {
+      return { data: user[0], error: null };
+    } else {
+      return { data: null, error: `No user found with email ${email}` };
     }
   } catch (err) {
     return { data: null, error: handleError(err) };
@@ -63,6 +76,7 @@ const userController = {
   findOneById,
   deleteById,
   findAll,
+  findOneByEmail,
   insert,
   update,
 };
