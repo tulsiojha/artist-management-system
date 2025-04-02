@@ -9,7 +9,7 @@ userRouter.get("/", async (_, res) => {
   if (result.data) {
     res.json(result);
   } else {
-    res.status(404).json(result);
+    res.status(400).json(result);
   }
 });
 
@@ -17,14 +17,14 @@ userRouter.get("/", async (_, res) => {
 userRouter.get("/:id", async (req, res) => {
   const id = req.params.id;
   if (!id) {
-    res.status(404).json({ data: null, error: "Id is required" });
+    res.status(400).json({ data: null, error: "Id is required" });
   }
   const result = await userController.findOneById({ id });
   if (result.data) {
     const { password, ...rest } = result.data;
     res.json({ ...result, data: rest });
   } else {
-    res.status(404).json(result);
+    res.status(400).json(result);
   }
 });
 
@@ -35,7 +35,7 @@ userRouter.post("/", async (req, res) => {
   if (result.data) {
     res.json(result);
   } else {
-    res.status(404).json(result);
+    res.status(400).json(result);
   }
 });
 
@@ -44,13 +44,13 @@ userRouter.post("/:id", async (req, res) => {
   const body = req.body;
   const id = req.params.id;
   if (!id) {
-    res.status(404).json({ data: null, error: "Id is required" });
+    res.status(400).json({ data: null, error: "Id is required" });
   }
   const result = await userController.update(body, id);
   if (result.data) {
     res.json(result);
   } else {
-    res.status(404).json(result);
+    res.status(400).json(result);
   }
 });
 
@@ -58,13 +58,13 @@ userRouter.post("/:id", async (req, res) => {
 userRouter.delete("/:id", async (req, res) => {
   const id = req.params.id;
   if (!id) {
-    res.status(404).json({ data: null, error: "Id is required" });
+    res.status(400).json({ data: null, error: "Id is required" });
   }
   const result = await userController.deleteById({ id });
   if (result.data) {
     res.json(result);
   } else {
-    res.status(404).json(result);
+    res.status(400).json(result);
   }
 });
 
