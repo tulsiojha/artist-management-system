@@ -14,10 +14,12 @@ const getById = async (req: Request, res: Response) => {
       const { password, ...rest } = user[0];
       res.json({ data: rest, error: null });
     } else {
-      res.json({ data: null, error: `No user found with id ${id}` });
+      res
+        .status(404)
+        .json({ data: null, error: `No user found with id ${id}` });
     }
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
+    res.status(500).json({ data: null, error: handleError(err) });
   }
 };
 
@@ -26,7 +28,7 @@ const getAll = async (req: Request, res: Response) => {
     const [users] = await userService.findAll();
     res.json({ data: users, error: null });
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
+    res.status(500).json({ data: null, error: handleError(err) });
   }
 };
 
@@ -40,8 +42,7 @@ const create = async (req: Request, res: Response) => {
     }
     res.status(400).json({ data: null, error: "Unable to add user" });
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
-    return;
+    res.status(500).json({ data: null, error: handleError(err) });
   }
 };
 
@@ -60,7 +61,7 @@ const update = async (req: Request, res: Response) => {
     }
     res.status(400).json({ data: null, error: "Unable to update user" });
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
+    res.status(500).json({ data: null, error: handleError(err) });
   }
 };
 
@@ -73,12 +74,12 @@ const deleteById = async (req: Request, res: Response) => {
     }
     const [result] = await userService.deleteById({ id });
     if (!result) {
-      res.status(400).json({ data: null, error: "Unable to delete user" });
+      res.status(404).json({ data: null, error: "Unable to delete user" });
       return;
     }
     res.json({ data: { id }, error: null });
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
+    res.status(500).json({ data: null, error: handleError(err) });
   }
 };
 

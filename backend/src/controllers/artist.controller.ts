@@ -14,11 +14,11 @@ const getById = async (req: Request, res: Response) => {
       res.json({ data: artist[0], error: null });
     } else {
       res
-        .status(400)
+        .status(404)
         .json({ data: null, error: `No artist found with id ${id}` });
     }
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
+    res.status(500).json({ data: null, error: handleError(err) });
   }
 };
 
@@ -27,7 +27,7 @@ const getAll = async (req: Request, res: Response) => {
     const [artists] = await artistService.findAll();
     res.json({ data: artists, error: null });
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
+    res.status(500).json({ data: null, error: handleError(err) });
   }
 };
 
@@ -41,7 +41,7 @@ const create = async (req: Request, res: Response) => {
     }
     res.status(400).json({ data: null, error: "Unable to add artist" });
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
+    res.status(500).json({ data: null, error: handleError(err) });
   }
 };
 
@@ -60,7 +60,7 @@ const update = async (req: Request, res: Response) => {
     }
     res.status(400).json({ data: null, error: "Unable to update artist" });
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
+    res.status(500).json({ data: null, error: handleError(err) });
   }
 };
 
@@ -78,7 +78,7 @@ const deleteById = async (req: Request, res: Response) => {
     }
     res.json({ data: { id }, error: null });
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
+    res.status(500).json({ data: null, error: handleError(err) });
   }
 };
 
