@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import config from "../utils/config";
-import userController from "../controllers/user.controller";
+import userService from "../services/user.service";
 
 export const authenticate = (
   req: Request,
@@ -25,15 +25,16 @@ export const authenticate = (
     }
     if (data) {
       const email = (data as jwt.JwtPayload).email;
+      console.log(email);
       if (email) {
-        const { data, error } = await userController.findOneByEmail({ email });
-        if (error) {
+        const [data] = await userService.findOneByEmail({ email });
+        if (data.length === 0) {
           res
             .status(403)
             .json({ data: null, error: "Access denied. Invalid access token" });
           return;
         }
-        req.user = data;
+        req.user = data[0];
       } else {
         res
           .status(403)

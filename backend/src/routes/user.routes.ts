@@ -1,72 +1,21 @@
 import express from "express";
 import userController from "../controllers/user.controller";
-import { authenticate } from "../middlewares/authenticate";
 
 const userRouter = express.Router();
 
 /* fetch all users */
-userRouter.get("/", async (_, res) => {
-  const result = await userController.findAll();
-  if (result.data) {
-    res.json(result);
-  } else {
-    res.status(400).json(result);
-  }
-});
+userRouter.get("/", userController.getAll);
 
 /* fetch one user */
-userRouter.get("/:id", async (req, res) => {
-  const id = req.params.id;
-  if (!id) {
-    res.status(400).json({ data: null, error: "Id is required" });
-  }
-  const result = await userController.findOneById({ id });
-  if (result.data) {
-    const { password, ...rest } = result.data;
-    res.json({ ...result, data: rest });
-  } else {
-    res.status(400).json(result);
-  }
-});
+userRouter.get("/:id", userController.getById);
 
 /* create a user */
-userRouter.post("/", async (req, res) => {
-  const body = req.body;
-  const result = await userController.insert(body);
-  if (result.data) {
-    res.json(result);
-  } else {
-    res.status(400).json(result);
-  }
-});
+userRouter.post("/", userController.create);
 
 /* update a user */
-userRouter.post("/:id", async (req, res) => {
-  const body = req.body;
-  const id = req.params.id;
-  if (!id) {
-    res.status(400).json({ data: null, error: "Id is required" });
-  }
-  const result = await userController.update(body, id);
-  if (result.data) {
-    res.json(result);
-  } else {
-    res.status(400).json(result);
-  }
-});
+userRouter.post("/:id", userController.update);
 
 /* delete a user */
-userRouter.delete("/:id", async (req, res) => {
-  const id = req.params.id;
-  if (!id) {
-    res.status(400).json({ data: null, error: "Id is required" });
-  }
-  const result = await userController.deleteById({ id });
-  if (result.data) {
-    res.json(result);
-  } else {
-    res.status(400).json(result);
-  }
-});
+userRouter.delete("/:id", userController.deleteById);
 
 export default userRouter;
