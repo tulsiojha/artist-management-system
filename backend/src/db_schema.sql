@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS user (
     dob DATETIME NOT NULL,
     gender ENUM('m','f','o') NOT NULL,
     address VARCHAR(255) NOT NULL,
+    role ENUM('super_admin', 'artist_manager', 'artist') NOT NULL,
     created_at DATETIME NOT NULL,
     updated_at DATETIME,
     id INT AUTO_INCREMENT,
@@ -27,7 +28,9 @@ CREATE TABLE IF NOT EXISTS artist (
     created_at DATETIME NOT NULL,
     updated_at DATETIME,
     id INT AUTO_INCREMENT,
-    PRIMARY KEY (id)
+    user_id INT NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
 
 
@@ -40,5 +43,5 @@ CREATE TABLE IF NOT EXISTS song (
     updated_at DATETIME,
     id INT AUTO_INCREMENT,
     PRIMARY KEY (id),
-    FOREIGN KEY (artist_id) REFERENCES artist(id)
+    FOREIGN KEY (artist_id) REFERENCES artist(id) ON DELETE CASCADE
 );

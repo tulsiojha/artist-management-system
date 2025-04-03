@@ -1,10 +1,16 @@
 import db from "../connections/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 
-enum GENDER {
+export enum GENDER {
   "MALE" = "m",
   "FEMALE" = "f",
   "OTHER" = "o",
+}
+
+export enum USER_ROLE {
+  "SUPER_ADMIN" = "super_admin",
+  "ARTIST_MANAGER" = "artist_manager",
+  "ARTIST" = "artist",
 }
 
 export interface IUser extends RowDataPacket {
@@ -16,6 +22,7 @@ export interface IUser extends RowDataPacket {
   address: string;
   phone: string;
   gender: GENDER;
+  role: USER_ROLE;
   created_at?: Date;
   updated_at?: Date;
 }
@@ -31,7 +38,7 @@ const findAll = () => {
     .promise()
     .query<
       IUser[]
-    >("SELECT id,first_name,last_name,dob,email,address,phone,gender,created_at,updated_at FROM user;");
+    >("SELECT id,first_name,last_name,dob,email,address,phone,gender,role,created_at,updated_at FROM user;");
 };
 
 /* query user by email */
