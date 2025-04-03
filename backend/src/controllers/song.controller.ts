@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import songService from "../services/song.service";
-import { handleError } from "../utils/commons";
+import { generatePagination, getPageInfo, handleError } from "../utils/commons";
 
 const getById = async (req: Request, res: Response) => {
   try {
@@ -24,8 +24,10 @@ const getById = async (req: Request, res: Response) => {
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    const [song] = await songService.findAll();
-    res.json({ data: song, error: null });
+    const [songs] = await songService.findAll();
+    const [page] = await songService.getTotalCount();
+
+    res.json({ data: { songs, ...generatePagination(page) }, error: null });
   } catch (err) {
     res.status(500).json({ data: null, error: handleError(err) });
   }

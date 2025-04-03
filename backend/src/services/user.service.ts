@@ -1,5 +1,6 @@
 import db from "../connections/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
+import { getPageInfo, IPageInfo, IPageResult } from "../utils/commons";
 
 export enum GENDER {
   "MALE" = "m",
@@ -27,18 +28,25 @@ export interface IUser extends RowDataPacket {
   updated_at?: Date;
 }
 
+const getTotalCount = () => {
+  return db
+    .promise()
+    .query<IPageResult[]>("SELECT COUNT(*) AS total FROM user;");
+};
+
 /* query user by id */
 const findOneById = ({ id }: { id: string }) => {
   return db.promise().query<IUser[]>("SELECT * FROM user WHERE id = ?;", [id]);
 };
 
 /* query all user */
-const findAll = () => {
+const findAll = (pageInfo?: IPageInfo) => {
+  const pI = getPageInfo(pageInfo);
   return db
     .promise()
     .query<
       IUser[]
-    >("SELECT id,first_name,last_name,dob,email,address,phone,gender,role,created_at,updated_at FROM user;");
+    >("SELECT id,first_name,last_name,dob,email,address,phone,gender,role,created_at,updated_at FROM user LIMIT ? OFFSET ?;", [pI.limit, pI.offset]);
 };
 
 /* query user by email */
@@ -79,6 +87,7 @@ const userService = {
   insertOne,
   updateOne,
   deleteById,
+  getTotalCount,
 };
 
 export default userService;

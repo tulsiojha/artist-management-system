@@ -8,12 +8,14 @@ export const hasRole = (role: USER_ROLE[]) => {
       res
         .status(401)
         .json({ data: null, error: "Access denied: Invalid user." });
+      return;
     } else {
       const hasRole = role.includes(user.role);
       if (!hasRole) {
         res
           .status(401)
           .json({ data: null, error: "Access denied: Invalid role." });
+        return;
       }
     }
     next();

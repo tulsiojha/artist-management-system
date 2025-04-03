@@ -1,5 +1,6 @@
 import db from "../connections/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
+import { IPageResult } from "../utils/commons";
 
 enum GENDER {
   "MALE" = "m",
@@ -17,6 +18,12 @@ export interface IArtist extends RowDataPacket {
   created_at?: Date;
   updated_at?: Date;
 }
+
+const getTotalCount = () => {
+  return db
+    .promise()
+    .query<IPageResult[]>("SELECT COUNT(*) AS total FROM artist;");
+};
 
 /* query artist by id */
 const findOneById = ({ id }: { id: string }) => {
@@ -64,6 +71,7 @@ const artistService = {
   insertOne,
   updateOne,
   deleteById,
+  getTotalCount,
 };
 
 export default artistService;

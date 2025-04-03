@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import userService from "../services/user.service";
-import { handleError } from "../utils/commons";
+import { generatePagination, handleError } from "../utils/commons";
 
 const getById = async (req: Request, res: Response) => {
   try {
@@ -26,7 +26,13 @@ const getById = async (req: Request, res: Response) => {
 const getAll = async (req: Request, res: Response) => {
   try {
     const [users] = await userService.findAll();
-    res.json({ data: users, error: null });
+    const [page] = await userService.getTotalCount();
+
+    res.json({
+      data: { users, ...generatePagination(page) },
+      error: null,
+    });
+    return;
   } catch (err) {
     res.status(500).json({ data: null, error: handleError(err) });
   }
