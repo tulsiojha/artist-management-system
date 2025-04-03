@@ -4,6 +4,7 @@ import authRouter from "./routes/auth.routes";
 import { IUser } from "./services/user.service";
 import { authenticate } from "./middlewares/authenticate";
 import artistRouter from "./routes/artist.routes";
+import songRouter from "./routes/song.routes";
 
 declare global {
   namespace Express {
@@ -19,6 +20,7 @@ app.use(express.json());
 
 app.use("/user", authenticate, userRouter);
 app.use("/artist", authenticate, artistRouter);
+app.use("/song", authenticate, songRouter);
 app.use("/auth", authRouter);
 
 app.listen(8000, () => {
