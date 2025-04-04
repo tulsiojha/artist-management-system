@@ -8,8 +8,7 @@ export const authenticate = (
   res: Response,
   next: NextFunction,
 ) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader?.split(" ")?.[1];
+  const token = req.cookies["accessToken"] as string;
   if (!token) {
     res
       .status(401)

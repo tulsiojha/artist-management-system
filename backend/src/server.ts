@@ -1,4 +1,6 @@
 import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.routes";
 import authRouter from "./routes/auth.routes";
 import { IUser } from "./services/user.service";
@@ -17,7 +19,15 @@ declare global {
 
 const port = config.PORT || 4000;
 
+const corsOptions = {
+  origin: "http://localhost:3000/",
+  credentials: true,
+};
+
 const app = express();
+
+app.use(cookieParser());
+app.use(cors());
 
 app.use(express.json());
 

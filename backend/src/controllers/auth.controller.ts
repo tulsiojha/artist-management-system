@@ -15,7 +15,12 @@ const login = async (req: Request, res: Response) => {
       const pswdMatch = await bcrypt.compare(password, pswd);
       if (pswdMatch) {
         const accessToken = generateAccessToken(email);
-        res.json({ data: { accessToken }, error: null });
+        res.cookie("accessToken", accessToken, {
+          secure: false,
+          httpOnly: true,
+          expires: new Date(Date.now() + 100 * 60 * 1000), //
+        });
+        res.json({ data: { email }, error: null });
         return;
       } else {
         res.json({ data: null, error: "Invalid email and password" });
@@ -26,7 +31,7 @@ const login = async (req: Request, res: Response) => {
       return;
     }
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
+    res.status(500).json({ data: null, error: handleError(err) });
   }
 };
 
@@ -54,13 +59,18 @@ const register = async (req: Request, res: Response) => {
     res.status(400).json({ data: null, error: "Unable to register user" });
     return;
   } catch (err) {
-    res.status(400).json({ data: null, error: handleError(err) });
+    res.status(500).json({ data: null, error: handleError(err) });
   }
+};
+
+const currentuser = async (req: Request, res: Response) => {
+  res.json({ data: { user: req.user || null }, error: null });
 };
 
 const authController = {
   login,
   register,
+  currentuser,
 };
 
 export default authController;
