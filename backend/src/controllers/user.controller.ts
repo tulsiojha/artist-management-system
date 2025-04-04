@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import userService from "../services/user.service";
 import { generatePagination, handleError } from "../utils/commons";
+import { validateUser } from "../utils/validation-schema";
 
 const getById = async (req: Request, res: Response) => {
   try {
@@ -40,6 +41,7 @@ const getAll = async (req: Request, res: Response) => {
 
 const create = async (req: Request, res: Response) => {
   try {
+    validateUser(req.body);
     const [result] = await userService.insertOne(req.body);
     if (result.affectedRows === 1) {
       const { password, ...rest } = req.body;
@@ -59,6 +61,7 @@ const update = async (req: Request, res: Response) => {
       res.status(400).json({ data: null, error: "Id is required" });
       return;
     }
+    validateUser(req.body);
     const [result] = await userService.updateOne(req.body, id);
     if (result.affectedRows === 1) {
       const { password, ...rest } = req.body;

@@ -2,7 +2,7 @@ import db from "../connections/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { IPageResult } from "../utils/commons";
 
-enum GENRE {
+export enum GENRE {
   "RNB" = "rnb",
   "COUNTRY" = "country",
   "CLASSIC" = "classic",
