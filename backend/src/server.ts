@@ -5,6 +5,7 @@ import { IUser } from "./services/user.service";
 import { authenticate } from "./middlewares/authenticate";
 import artistRouter from "./routes/artist.routes";
 import songRouter from "./routes/song.routes";
+import config from "./utils/config";
 
 declare global {
   namespace Express {
@@ -13,6 +14,8 @@ declare global {
     }
   }
 }
+
+const port = config.PORT || 4000;
 
 const app = express();
 
@@ -23,6 +26,6 @@ app.use("/artist", authenticate, artistRouter);
 app.use("/song", authenticate, songRouter);
 app.use("/auth", authRouter);
 
-app.listen(8000, () => {
-  console.log("server started successfully");
+app.listen(port, () => {
+  console.log(`Server successfully started at port: ${port}`);
 });

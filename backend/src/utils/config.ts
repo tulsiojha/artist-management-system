@@ -8,6 +8,7 @@ const config = {
   DB_PASSWORD: process.env.DB_PASSWORD,
   DB_DATABASE: process.env.DB_DATABASE,
   JWT_TOKEN_SECRET: process.env.JWT_TOKEN_SECRET,
+  PORT: process.env.PORT,
 };
 
 export default config;
