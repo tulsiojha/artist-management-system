@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import songService from "../services/song.service";
-import { generatePagination, handleError } from "../utils/commons";
+import { generatePagination, getPageInfo, handleError } from "../utils/commons";
 import { validateSong } from "../utils/validation-schema";
 
 const getById = async (req: Request, res: Response) => {
@@ -25,7 +25,7 @@ const getById = async (req: Request, res: Response) => {
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    const [songs] = await songService.findAll();
+    const [songs] = await songService.findAll(getPageInfo(req));
     const [page] = await songService.getTotalCount();
 
     res.json({ data: { songs, ...generatePagination(page) }, error: null });

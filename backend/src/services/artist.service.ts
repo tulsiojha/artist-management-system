@@ -1,6 +1,6 @@
 import db from "../connections/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
-import { IPageResult } from "../utils/commons";
+import { IPageInfo, IPageResult } from "../utils/commons";
 
 enum GENDER {
   "MALE" = "m",
@@ -33,12 +33,12 @@ const findOneById = ({ id }: { id: string }) => {
 };
 
 /* query all artist */
-const findAll = () => {
+const findAll = (pI?: IPageInfo) => {
   return db
     .promise()
     .query<
       IArtist[]
-    >("SELECT id,name,dob,address,gender,first_release_year,no_of_albums_released,created_at,updated_at FROM artist;");
+    >("SELECT id,name,dob,address,gender,first_release_year,no_of_albums_released,created_at,updated_at FROM artist LIMIT ? OFFSET ?;", [pI?.limit, pI?.offset]);
 };
 
 /* create a artist */

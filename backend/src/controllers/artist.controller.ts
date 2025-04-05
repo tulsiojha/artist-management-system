@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import artistService from "../services/artist.service";
-import { generatePagination, handleError } from "../utils/commons";
+import { generatePagination, getPageInfo, handleError } from "../utils/commons";
 import { validateArtist } from "../utils/validation-schema";
 
 const getById = async (req: Request, res: Response) => {
@@ -25,7 +25,7 @@ const getById = async (req: Request, res: Response) => {
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    const [artists] = await artistService.findAll();
+    const [artists] = await artistService.findAll(getPageInfo(req));
     const [page] = await artistService.getTotalCount();
 
     res.json({

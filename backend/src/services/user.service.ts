@@ -1,6 +1,6 @@
 import db from "../connections/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
-import { getPageInfo, IPageInfo, IPageResult } from "../utils/commons";
+import { IPageInfo, IPageResult } from "../utils/commons";
 
 export enum GENDER {
   "MALE" = "m",
@@ -40,13 +40,12 @@ const findOneById = ({ id }: { id: string }) => {
 };
 
 /* query all user */
-const findAll = (pageInfo?: IPageInfo) => {
-  const pI = getPageInfo(pageInfo);
+const findAll = (pI?: IPageInfo) => {
   return db
     .promise()
     .query<
       IUser[]
-    >("SELECT id,first_name,last_name,dob,email,address,phone,gender,role,created_at,updated_at FROM user LIMIT ? OFFSET ?;", [pI.limit, pI.offset]);
+    >("SELECT id,first_name,last_name,dob,email,address,phone,gender,role,created_at,updated_at FROM user LIMIT ? OFFSET ?;", [pI?.limit, pI?.offset]);
 };
 
 /* query user by email */

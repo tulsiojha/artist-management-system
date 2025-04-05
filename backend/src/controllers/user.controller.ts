@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import userService from "../services/user.service";
-import { generatePagination, handleError } from "../utils/commons";
+import { generatePagination, getPageInfo, handleError } from "../utils/commons";
 import { validateUser } from "../utils/validation-schema";
 
 const getById = async (req: Request, res: Response) => {
@@ -26,7 +26,7 @@ const getById = async (req: Request, res: Response) => {
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    const [users] = await userService.findAll();
+    const [users] = await userService.findAll(getPageInfo(req));
     const [page] = await userService.getTotalCount();
 
     res.json({

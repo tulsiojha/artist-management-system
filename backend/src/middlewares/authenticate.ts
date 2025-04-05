@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import config from "../utils/config";
-import userService from "../services/user.service";
+import userService, { IUser } from "../services/user.service";
 
 export const authenticate = (
   req: Request,
@@ -33,7 +33,8 @@ export const authenticate = (
             .json({ data: null, error: "Access denied. Invalid access token" });
           return;
         }
-        req.user = data[0];
+        const { password, ...user } = data[0];
+        req.user = user as IUser;
       } else {
         res
           .status(403)

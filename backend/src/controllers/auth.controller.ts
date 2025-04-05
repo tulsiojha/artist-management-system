@@ -29,11 +29,13 @@ const login = async (req: Request, res: Response) => {
         res.json({ data: { email }, error: null });
         return;
       } else {
-        res.json({ data: null, error: "Invalid email and password" });
+        res
+          .status(401)
+          .json({ data: null, error: "Invalid email and password" });
         return;
       }
     } else {
-      res.status(400).json({ data: null, error: "Invalid email and password" });
+      res.status(401).json({ data: null, error: "Invalid email and password" });
       return;
     }
   } catch (err) {

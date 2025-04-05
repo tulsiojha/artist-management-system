@@ -1,6 +1,6 @@
 import db from "../connections/db";
 import { ResultSetHeader, RowDataPacket } from "mysql2";
-import { IPageResult } from "../utils/commons";
+import { IPageInfo, IPageResult } from "../utils/commons";
 
 export enum GENRE {
   "RNB" = "rnb",
@@ -31,12 +31,12 @@ const findOneById = ({ id }: { id: string }) => {
 };
 
 /* query all song */
-const findAll = () => {
+const findAll = (pI?: IPageInfo) => {
   return db
     .promise()
     .query<
       ISong[]
-    >("SELECT id,album_name,genre,title,artist_id,created_at,updated_at FROM song;");
+    >("SELECT id,album_name,genre,title,artist_id,created_at,updated_at FROM song LIMIT ? OFFSET ?;", [pI?.limit, pI?.offset]);
 };
 
 /* create a song */
