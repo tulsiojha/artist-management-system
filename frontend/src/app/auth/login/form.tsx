@@ -29,7 +29,7 @@ const LoginForm = () => {
     await axios.post("/backend/auth/login", {
       ...e,
     });
-    router.push("/");
+    router.push("/dashboard");
   };
 
   return (

@@ -1,8 +1,8 @@
 import List from "@/components/list";
-import { user } from "@/lib/api";
+import { artist } from "@/lib/api";
 
-const UserPage = async () => {
-  const users = await user.list();
+const Page = async () => {
+  const artists = await artist.list();
   return (
     <div className="p-2">
       <List
@@ -13,14 +13,14 @@ const UserPage = async () => {
           { id: "gender", label: "Gender", width: "180px" },
           { id: "created_at", label: "Created At" },
         ]}
-        rows={users.data.users.map((user) => ({
-          id: user.id,
+        rows={artists.data.artists.map((art) => ({
+          id: art.id,
           columns: {
-            name: { render: () => `${user.first_name} ${user.last_name}` },
-            email: { render: () => user.email },
-            role: { render: () => user.role },
-            gender: { render: () => user.gender },
-            created_at: { render: () => user.created_at },
+            name: { render: () => `${art.first_name} ${art.last_name}` },
+            email: { render: () => art.email },
+            role: { render: () => art.role },
+            gender: { render: () => art.gender },
+            created_at: { render: () => art.created_at },
           },
         }))}
       />
@@ -28,4 +28,4 @@ const UserPage = async () => {
   );
 };
 
-export default UserPage;
+export default Page;

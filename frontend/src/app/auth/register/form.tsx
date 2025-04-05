@@ -51,7 +51,7 @@ const RegisterForm = () => {
       ...data,
       role: "super_admin",
     });
-    router.push("/");
+    router.push("/auth/login");
   };
 
   return (

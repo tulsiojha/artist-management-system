@@ -1,7 +1,5 @@
-import { redirect } from "next/navigation";
-
 const Page = () => {
-  redirect("/dashboard/user");
+  return null;
 };
 
 export default Page;
