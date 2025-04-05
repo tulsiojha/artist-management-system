@@ -1,4 +1,6 @@
+import { PAGINATION_LIMIT } from "@/utils/constants";
 import { queryServer } from "@/utils/query-server";
+import { IArtistResponse, IUser, IUserResponse } from "@/utils/types";
 import { redirect } from "next/navigation";
 
 export const baseUrl = "http://localhost:8000";
@@ -10,7 +12,7 @@ export const currentUser = async () => {
       return null;
     }
     if (res.data) {
-      return res.data.user;
+      return res.data.user as IUser;
     }
     return null;
   } catch {
@@ -28,8 +30,10 @@ export const ensureLoggedIn = async () => {
 
 /* user apis */
 const user = {
-  list: async () => {
-    return await queryServer(`${baseUrl}/user`);
+  list: async (page = 1, limit = PAGINATION_LIMIT) => {
+    return (await queryServer(
+      `${baseUrl}/user?limit=${limit}&page=${page}`,
+    )) as IUserResponse;
   },
   one: async (id: string) => {
     return await queryServer(`${baseUrl}/user/${id}`);
@@ -38,8 +42,10 @@ const user = {
 
 /* artist apis */
 const artist = {
-  list: async () => {
-    return await queryServer(`${baseUrl}/artist`);
+  list: async (page = 1, limit = PAGINATION_LIMIT) => {
+    return (await queryServer(
+      `${baseUrl}/artist?limit=${limit}&page=${page}`,
+    )) as IArtistResponse;
   },
   one: async (id: string) => {
     return await queryServer(`${baseUrl}/artist/${id}`);

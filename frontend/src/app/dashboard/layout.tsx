@@ -1,20 +1,14 @@
-import LogoutButton from "@/components/logout-button";
 import { currentUser } from "@/lib/api";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
+import Dash from "./dash";
 
 const DashLayout = async ({ children }: { children?: ReactNode }) => {
-  const auth = await currentUser();
-  if (!auth) {
+  const user = await currentUser();
+  if (!user) {
     redirect("/auth/login");
   }
-  return (
-    <>
-      hello
-      <LogoutButton />
-      {children}
-    </>
-  );
+  return <Dash user={user}>{children}</Dash>;
 };
 
 export default DashLayout;

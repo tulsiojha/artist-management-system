@@ -7,6 +7,8 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import handleErrors from "@/utils/handleErrors";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -20,16 +22,20 @@ const LoginForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit = async (e: ISchema) => {
-    await axios.post("/backend/auth/login", {
-      ...e,
-    });
-    router.push("/dashboard");
+    try {
+      await axios.post("/backend/auth/login", {
+        ...e,
+      });
+      router.push("/dashboard");
+    } catch (err) {
+      toast.error(handleErrors(err), { richColors: true, closeButton: true });
+    }
   };
 
   return (
@@ -53,7 +59,7 @@ const LoginForm = () => {
           {...register("password")}
         />
       </div>
-      <Button variant="primary" type="submit">
+      <Button variant="primary" type="submit" loading={isSubmitting}>
         Login
       </Button>
       <div className="text-center">
