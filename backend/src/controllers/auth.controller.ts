@@ -20,6 +20,12 @@ const login = async (req: Request, res: Response) => {
           httpOnly: true,
           expires: new Date(Date.now() + 100 * 60 * 1000), //
         });
+
+        res.cookie("role", user[0].role, {
+          secure: false,
+          httpOnly: true,
+          expires: new Date(Date.now() + 100 * 60 * 1000), //
+        });
         res.json({ data: { email }, error: null });
         return;
       } else {
@@ -63,12 +69,19 @@ const register = async (req: Request, res: Response) => {
   }
 };
 
+const logout = async (req: Request, res: Response) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("role");
+  res.json({ data: { logout: true }, error: null });
+};
+
 const currentuser = async (req: Request, res: Response) => {
   res.json({ data: { user: req.user || null }, error: null });
 };
 
 const authController = {
   login,
+  logout,
   register,
   currentuser,
 };
