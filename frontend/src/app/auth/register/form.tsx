@@ -44,7 +44,6 @@ const RegisterForm = () => {
     resolver: zodResolver(registerSchema),
   });
 
-  console.log(errors);
   const onSubmit = async (e: ISchema) => {
     const { repassword, ...data } = e;
     await axios.post("/backend/auth/register", {

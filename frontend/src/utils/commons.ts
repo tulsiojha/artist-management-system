@@ -9,3 +9,15 @@ export const formatDate = (date?: string | Date) =>
         day: "numeric",
       })
     : "-";
+
+export const formatDateToString = (d: Date | string) => {
+  try {
+    if (!d) {
+      return "";
+    }
+    const date = new Date(d);
+    return date.toISOString().slice(0, 10);
+  } catch {
+    return "";
+  }
+};

@@ -1,6 +1,7 @@
 "use client";
 import { PAGINATION_LIMIT } from "@/utils/constants";
 import Pagination from "./pagination";
+import { ReactNode } from "react";
 
 const List = ({
   rows,
@@ -10,7 +11,10 @@ const List = ({
   page = 1,
   perPage = PAGINATION_LIMIT,
 }: {
-  rows: any[];
+  rows: {
+    columns: Record<string, { render: () => ReactNode }>;
+    id: string | number;
+  }[];
   columns: { className?: string; width?: string; label: string; id: string }[];
   totalItems: number;
   onPageChanged?: (page: number) => void;
