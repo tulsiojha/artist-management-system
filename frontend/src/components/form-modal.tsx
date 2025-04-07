@@ -12,6 +12,8 @@ interface IFormModal<T extends z.ZodSchema<any>> {
   openChange?: (open: boolean) => void;
   header?: ReactNode;
   onSubmit: (e: z.infer<T>) => void;
+  height?: string | number;
+  width?: string | number;
 }
 
 const FormModal = <T extends z.ZodSchema<any>>({
@@ -22,6 +24,8 @@ const FormModal = <T extends z.ZodSchema<any>>({
   openChange,
   header,
   onSubmit,
+  height,
+  width,
 }: IFormModal<T>) => {
   const form = useForm({
     resolver: zodResolver(schema),
@@ -31,7 +35,13 @@ const FormModal = <T extends z.ZodSchema<any>>({
     form.reset(initialValues);
   }, [initialValues]);
   return (
-    <Modal open={open} openChange={openChange} header={header}>
+    <Modal
+      open={open}
+      openChange={openChange}
+      header={header}
+      width={width}
+      height={height}
+    >
       <form
         className="flex flex-col h-full overflow-y-auto p-3"
         onSubmit={form.handleSubmit(onSubmit)}

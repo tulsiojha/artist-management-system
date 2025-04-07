@@ -141,11 +141,13 @@ const UserModal = ({
       schema={update ? updateUserSchema : createUserSchema}
       onSubmit={onSubmit}
       initialValues={
-        initialValues || {
-          dob: undefined,
-          role: USER_ROLE.SUPER_ADMIN,
-          gender: GENDER.MALE,
-        }
+        initialValues
+          ? { ...initialValues, dob: new Date(initialValues.dob) }
+          : {
+              dob: undefined,
+              role: USER_ROLE.SUPER_ADMIN,
+              gender: GENDER.MALE,
+            }
       }
       open={open}
       openChange={openChange}

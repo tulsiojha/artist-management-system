@@ -1,6 +1,11 @@
 import { PAGINATION_LIMIT } from "@/utils/constants";
 import { queryServer } from "@/utils/query-server";
-import { IArtistResponse, IUser, IUserResponse } from "@/utils/types";
+import {
+  IArtistResponse,
+  IUnlinkedUserResponse,
+  IUser,
+  IUserResponse,
+} from "@/utils/types";
 import { redirect } from "next/navigation";
 
 export const baseUrl = "http://localhost:8000";
@@ -37,6 +42,11 @@ const user = {
   },
   one: async (id: string) => {
     return await queryServer(`${baseUrl}/user/${id}`);
+  },
+  unlinkedUsers: async () => {
+    return (await queryServer(
+      `${baseUrl}/user/unlinked-users`,
+    )) as IUnlinkedUserResponse;
   },
 };
 

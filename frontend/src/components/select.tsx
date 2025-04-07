@@ -2,7 +2,7 @@ import { ComponentProps, ReactNode } from "react";
 
 const Select = (
   props: ComponentProps<"select"> & {
-    items: { label: string; value: string }[];
+    items: { label: string | number; value: string | number }[];
 
     label?: ReactNode;
     error?: ReactNode;

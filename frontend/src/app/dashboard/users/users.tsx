@@ -45,6 +45,7 @@ const Users = ({ data }: IUserResponse) => {
         }}
         page={Number(page || 1)}
         columns={[
+          { id: "id", label: "User Id", width: "100px" },
           { id: "name", label: "Full name", width: "200px" },
           { id: "email", label: "Email", width: "300px" },
           { id: "role", label: "Role", width: "180px" },
@@ -55,6 +56,7 @@ const Users = ({ data }: IUserResponse) => {
         rows={data.users.map((user) => ({
           id: user.id,
           columns: {
+            id: { render: () => user.id },
             name: { render: () => `${user.first_name} ${user.last_name}` },
             email: { render: () => user.email },
             role: { render: () => user.role },

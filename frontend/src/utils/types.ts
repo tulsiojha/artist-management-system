@@ -29,8 +29,18 @@ export interface IUser {
   updated_at?: Date;
 }
 
+export interface IUnlinkedUser {
+  uid: number;
+  first_name: string;
+  last_name: string;
+}
+
 export type IUserResponse = {
   data: { users: IUser[]; pageInfo: IPageResult };
+};
+
+export type IUnlinkedUserResponse = {
+  data: { users: IUnlinkedUser[] };
 };
 
 export interface IArtist {
@@ -39,7 +49,7 @@ export interface IArtist {
   dob: Date;
   address: string;
   gender?: GENDER;
-  first_release_year: string;
+  first_release_year: number;
   no_of_albums_released?: number;
   created_at?: Date;
   updated_at?: Date;
