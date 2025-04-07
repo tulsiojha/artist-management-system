@@ -14,8 +14,17 @@ export enum USER_ROLE {
   "ARTIST" = "artist",
 }
 
+export enum GENRE {
+  "RNB" = "rnb",
+  "COUNTRY" = "country",
+  "CLASSIC" = "classic",
+  "ROCK" = "rock",
+  "JAZZ" = "jazz",
+}
+
 export interface IUser {
   id: number;
+  artist_id: number;
   first_name: string;
   last_name: string;
   dob: Date;
@@ -57,4 +66,18 @@ export interface IArtist {
 
 export type IArtistResponse = {
   data: { artists: IArtist[]; pageInfo: IPageResult };
+};
+
+export interface ISong {
+  id: number;
+  artist_id: number;
+  title: string;
+  album_name: string;
+  genre?: GENRE;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export type ISongResponse = {
+  data: { songs: ISong[]; pageInfo: IPageResult };
 };

@@ -3,102 +3,78 @@ import DeleteModal from "@/components/delete-modal";
 import List from "@/components/list";
 import { formatDate } from "@/utils/commons";
 import handleErrors from "@/utils/handleErrors";
-import { IArtist, IArtistResponse, USER_ROLE } from "@/utils/types";
+import { ISong, ISongResponse, USER_ROLE } from "@/utils/types";
 import axios from "axios";
-import { FileArchive, Pencil, Plus, Trash } from "lucide-react";
+import { Pencil, Plus, Trash } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import ArtistModal from "./artist-modal";
 import ActionBar from "@/components/action-bar";
 import Button from "@/components/button";
 import useAuth from "@/hooks/use-auth";
+import SongModal from "./song-modal";
 
-const Artists = ({ data }: IArtistResponse) => {
+const Songs = ({ data }: { data: ISongResponse["data"]; artist?: number }) => {
   const router = useRouter();
   const sp = useSearchParams();
   const page = sp.get("page");
 
   const user = useAuth();
-  const isArtistManager = user?.role === USER_ROLE.ARTIST_MANAGER;
+  const isArtist = user?.role === USER_ROLE.ARTIST;
 
   const [dataModalOpen, setDataModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedArtist, setSelectedArtist] = useState<IArtist | undefined>();
+  const [selectedSong, setSelectedSong] = useState<ISong | undefined>();
   return (
     <div className="p-2 flex flex-col">
       <ActionBar
-        title="Artists"
+        title="Songs"
         action={
-          isArtistManager ? (
-            <div>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setSelectedArtist(undefined);
-                  setDataModalOpen(true);
-                }}
-              >
-                <FileArchive size={14} />
-                Import CSV
-              </Button>{" "}
-              <Button
-                onClick={() => {
-                  setSelectedArtist(undefined);
-                  setDataModalOpen(true);
-                }}
-              >
-                <Plus size={14} />
-                Create artist
-              </Button>
-            </div>
+          isArtist ? (
+            <Button
+              onClick={() => {
+                setSelectedSong(undefined);
+                setDataModalOpen(true);
+              }}
+            >
+              <Plus size={14} />
+              Create song
+            </Button>
           ) : null
         }
       />
       <List
         totalItems={data.pageInfo.total}
         onPageChanged={(p) => {
-          router.push(`/dashboard/users/?page=${p}`);
+          router.push(`/dashboard/songs/?page=${p}`);
         }}
         page={Number(page || 1)}
         columns={[
-          { id: "name", label: "Full name", width: "200px" },
-          { id: "gender", label: "Gender", width: "180px" },
+          { id: "name", label: "Name", width: "200px" },
+          { id: "album_name", label: "Album", width: "180px" },
           {
-            id: "first_release_year",
-            label: "First release year",
-            width: "180px",
-          },
-          {
-            id: "no_of_albums_released",
-            label: "No of albums",
+            id: "genre",
+            label: "Genre",
             width: "180px",
           },
           { id: "created_at", label: "Created At", width: "180px" },
-          ...(isArtistManager ? [{ id: "actions", label: "Actions" }] : []),
+          ...(isArtist ? [{ id: "actions", label: "Actions" }] : []),
         ]}
-        rows={data.artists.map((art) => ({
-          id: art.id,
-          onClick: () => {
-            router.push(`/dashboard/artists/${art.id}`);
-          },
+        rows={data.songs.map((song) => ({
+          id: song.id,
           columns: {
-            name: { render: () => art.name },
-            gender: { render: () => art.gender },
-            first_release_year: { render: () => art.first_release_year },
-            no_of_albums_released: {
-              render: () => art.no_of_albums_released || "-",
-            },
-            created_at: { render: () => formatDate(art.created_at) },
-            ...(isArtistManager
+            name: { render: () => song.title },
+            album_name: { render: () => song.album_name },
+            genre: { render: () => song.genre },
+            created_at: { render: () => formatDate(song.created_at) },
+            ...(isArtist
               ? {
                   actions: {
                     render: () => (
                       <div className="flex flex-row items-center gap-2">
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedArtist(art);
+                          onClick={() => {
+                            setSelectedSong(song);
                             setDataModalOpen(true);
                           }}
                           className="cursor-pointer p-1.5 hover:bg-gray-200 rounded"
@@ -106,9 +82,8 @@ const Artists = ({ data }: IArtistResponse) => {
                           <Pencil size={14} />
                         </button>
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedArtist(art);
+                          onClick={() => {
+                            setSelectedSong(song);
                             setDeleteModalOpen(true);
                           }}
                           className="cursor-pointer p-1.5 hover:bg-gray-200 rounded text-red-600"
@@ -123,28 +98,28 @@ const Artists = ({ data }: IArtistResponse) => {
           },
         }))}
       />
-      <ArtistModal
-        initialValues={selectedArtist}
+      <SongModal
+        initialValues={selectedSong}
         open={dataModalOpen}
         openChange={() => {
-          setSelectedArtist(undefined);
+          setSelectedSong(undefined);
           setDataModalOpen(false);
         }}
       />
       <DeleteModal
         open={deleteModalOpen}
         openChange={() => {
-          setSelectedArtist(undefined);
+          setSelectedSong(undefined);
           setDeleteModalOpen(false);
         }}
-        resource="artist"
+        resource="song"
         onSubmit={async () => {
-          if (selectedArtist) {
+          if (selectedSong) {
             try {
               const res = await axios.delete(
-                `/backend/artist/${selectedArtist.id}`,
+                `/backend/song/${selectedSong.id}`,
               );
-              toast.success("Deleting artist is successful", {
+              toast.success("Deleting song is successful", {
                 richColors: true,
                 closeButton: true,
               });
@@ -164,4 +139,4 @@ const Artists = ({ data }: IArtistResponse) => {
   );
 };
 
-export default Artists;
+export default Songs;

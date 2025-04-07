@@ -23,7 +23,7 @@ const Users = ({ data }: IUserResponse) => {
   const [selectedUser, setSelectedUser] = useState<IUser | undefined>();
 
   return (
-    <div className="p-2">
+    <div className="p-2 flex flex-col overflow-hidden">
       <ActionBar
         title="Users"
         action={

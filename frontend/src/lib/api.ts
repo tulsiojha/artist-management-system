@@ -1,7 +1,9 @@
 import { PAGINATION_LIMIT } from "@/utils/constants";
+import { queryClient } from "@/utils/query-client";
 import { queryServer } from "@/utils/query-server";
 import {
   IArtistResponse,
+  ISongResponse,
   IUnlinkedUserResponse,
   IUser,
   IUserResponse,
@@ -62,4 +64,21 @@ const artist = {
   },
 };
 
-export { user, artist };
+/* song apis */
+const song = {
+  list: async (page = 1, limit = PAGINATION_LIMIT) => {
+    return (await queryServer(
+      `${baseUrl}/song?limit=${limit}&page=${page}`,
+    )) as ISongResponse;
+  },
+  listByArtist: async (id?: number, page = 1, limit = PAGINATION_LIMIT) => {
+    return (await queryServer(
+      `${baseUrl}/song/getAllByArtist/${id}?limit=${limit}&page=${page}`,
+    )) as ISongResponse;
+  },
+  one: async (id: string) => {
+    return await queryServer(`${baseUrl}/song/${id}`);
+  },
+};
+
+export { user, artist, song };
