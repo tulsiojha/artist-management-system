@@ -12,6 +12,13 @@ songRouter.get(
   songController.getAll,
 );
 
+/* fetch all songs */
+songRouter.get(
+  "/getAllByArtist/:id",
+  hasRole([USER_ROLE.SUPER_ADMIN, USER_ROLE.ARTIST_MANAGER, USER_ROLE.ARTIST]),
+  songController.getAllByArtist,
+);
+
 /* fetch one song */
 songRouter.get("/:id", hasRole([USER_ROLE.ARTIST]), songController.getById);
 

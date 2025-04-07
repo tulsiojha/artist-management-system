@@ -24,6 +24,13 @@ const getTotalCount = () => {
     .promise()
     .query<IPageResult[]>("SELECT COUNT(*) AS total FROM song;");
 };
+const getTotalCountForArtist = (artist: string) => {
+  return db
+    .promise()
+    .query<
+      IPageResult[]
+    >("SELECT COUNT(*) AS total FROM song WHERE artist_id = ?;", [artist]);
+};
 
 /* query song by id */
 const findOneById = ({ id }: { id: string }) => {
@@ -37,6 +44,15 @@ const findAll = (pI?: IPageInfo) => {
     .query<
       ISong[]
     >("SELECT id,album_name,genre,title,artist_id,created_at,updated_at FROM song LIMIT ? OFFSET ?;", [pI?.limit, pI?.offset]);
+};
+
+/* query all song */
+const findAllByArtist = (artist: string, pI?: IPageInfo) => {
+  return db
+    .promise()
+    .query<
+      ISong[]
+    >("SELECT id,album_name,genre,title,artist_id,created_at,updated_at FROM song WHERE artist_id = ? LIMIT ? OFFSET ?;", [artist, pI?.limit, pI?.offset]);
 };
 
 /* create a song */
@@ -66,10 +82,12 @@ const deleteById = ({ id }: { id: string }) => {
 const songService = {
   findOneById,
   findAll,
+  findAllByArtist,
   insertOne,
   updateOne,
   deleteById,
   getTotalCount,
+  getTotalCountForArtist,
 };
 
 export default songService;

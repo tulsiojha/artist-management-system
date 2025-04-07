@@ -34,6 +34,22 @@ const getAll = async (req: Request, res: Response) => {
   }
 };
 
+const getAllByArtist = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    if (!id) {
+      res.status(400).json({ data: null, error: "Id is required" });
+      return;
+    }
+    const [songs] = await songService.findAllByArtist(id, getPageInfo(req));
+    const [page] = await songService.getTotalCountForArtist(id);
+
+    res.json({ data: { songs, ...generatePagination(page) }, error: null });
+  } catch (err) {
+    res.status(500).json({ data: null, error: handleError(err) });
+  }
+};
+
 const create = async (req: Request, res: Response) => {
   try {
     validateSong(req.body);
@@ -87,6 +103,13 @@ const deleteById = async (req: Request, res: Response) => {
   }
 };
 
-const songController = { getAll, getById, create, update, deleteById };
+const songController = {
+  getAll,
+  getAllByArtist,
+  getById,
+  create,
+  update,
+  deleteById,
+};
 
 export default songController;

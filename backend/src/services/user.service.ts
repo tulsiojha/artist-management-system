@@ -36,7 +36,11 @@ const getTotalCount = () => {
 
 /* query user by id */
 const findOneById = ({ id }: { id: string }) => {
-  return db.promise().query<IUser[]>("SELECT * FROM user WHERE id = ?;", [id]);
+  return db
+    .promise()
+    .query<
+      IUser[]
+    >("SELECT u.*, a.id AS artist_id FROM user u LEFT JOIN artist a ON u.id = a.user_id  WHERE u.id = ?;", [id]);
 };
 
 /* query all user */
@@ -61,7 +65,9 @@ const findArtistUsers = () => {
 const findOneByEmail = ({ email }: { email: string }) => {
   return db
     .promise()
-    .query<IUser[]>("SELECT * FROM user WHERE email = ?;", [email]);
+    .query<
+      IUser[]
+    >("SELECT u.*, a.id AS artist_id FROM user u LEFT JOIN artist a ON u.id = a.user_id  WHERE u.email = ?;", [email]);
 };
 
 /* create a user */
