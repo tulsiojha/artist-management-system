@@ -5,8 +5,12 @@ import { USER_ROLE } from "../services/user.service";
 
 const userRouter = express.Router();
 
-/* fetch all users */
-userRouter.get("/", hasRole([USER_ROLE.SUPER_ADMIN]), userController.getAll);
+/* fetch all unlinked artist users */
+userRouter.get(
+  "/unlinked-user",
+  hasRole([USER_ROLE.SUPER_ADMIN, USER_ROLE.ARTIST_MANAGER]),
+  userController.getAllUserArtists,
+);
 
 /* fetch one user */
 userRouter.get(
@@ -15,6 +19,8 @@ userRouter.get(
   userController.getById,
 );
 
+/* fetch all users */
+userRouter.get("/", hasRole([USER_ROLE.SUPER_ADMIN]), userController.getAll);
 /* create a user */
 userRouter.post("/", hasRole([USER_ROLE.SUPER_ADMIN]), userController.create);
 

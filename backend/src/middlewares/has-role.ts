@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { USER_ROLE } from "../services/user.service";
 
-export const hasRole = (role: USER_ROLE[]) => {
+export const hasRole = (roles: USER_ROLE[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
     if (!user) {
@@ -10,7 +10,7 @@ export const hasRole = (role: USER_ROLE[]) => {
         .json({ data: null, error: "Access denied: Invalid user." });
       return;
     } else {
-      const hasRole = role.includes(user.role);
+      const hasRole = roles.includes(user.role);
       if (!hasRole) {
         res
           .status(401)

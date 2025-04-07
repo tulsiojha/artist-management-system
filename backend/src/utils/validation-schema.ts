@@ -3,7 +3,7 @@ import { GENDER, IUser, USER_ROLE } from "../services/user.service";
 import { GENRE, ISong } from "../services/song.service";
 import { IArtist } from "../services/artist.service";
 
-export const validateUser = (data: IUser) => {
+export const validateUser = (data: IUser, update = false) => {
   const schema = z.object({
     first_name: z.string({
       invalid_type_error: "invalid first_name",
@@ -18,12 +18,6 @@ export const validateUser = (data: IUser) => {
         required_error: "email is required",
       })
       .email("invalid email"),
-    password: z
-      .string({
-        invalid_type_error: "invalid password",
-        required_error: "password is required",
-      })
-      .min(6, "at least 6 characters are required"),
     phone: z.string({
       invalid_type_error: "invalid phone",
       required_error: "phone is required",
@@ -61,6 +55,16 @@ export const validateUser = (data: IUser) => {
       },
     }),
   });
+  if (!update) {
+    schema.extend({
+      password: z
+        .string({
+          invalid_type_error: "invalid password",
+          required_error: "password is required",
+        })
+        .min(6, "at least 6 characters are required"),
+    });
+  }
   return schema.parse(data);
 };
 
@@ -86,19 +90,20 @@ export const validateArtist = (data: IArtist) => {
         }
       },
     }),
-    address: z.string({
-      invalid_type_error: "invalid address",
-      required_error: "address is required",
-    }),
-    first_release_year: z.string({
-      invalid_type_error: "invalid first_release_year",
-      required_error: "first_release_year is required",
-    }),
+    address: z.string().min(2, "must be atleast 2 characters"),
+    first_release_year: z
+      .number()
+      .min(1900, { message: "Year must be 1900 or later" })
+      .max(new Date().getFullYear(), {
+        message: "Year cannot be in the future",
+      }),
     no_of_albums_released: z
       .number({
         invalid_type_error: "invalid no_of_albums_released",
       })
-      .optional(),
+      .optional()
+      .nullable()
+      .nullish(),
   });
   return schema.parse(data);
 };

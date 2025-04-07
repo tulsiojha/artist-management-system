@@ -48,6 +48,15 @@ const findAll = (pI?: IPageInfo) => {
     >("SELECT id,first_name,last_name,dob,email,address,phone,gender,role,created_at,updated_at FROM user LIMIT ? OFFSET ?;", [pI?.limit, pI?.offset]);
 };
 
+/* query all user */
+const findArtistUsers = () => {
+  return db
+    .promise()
+    .query<
+      IUser[]
+    >("SELECT user.id as uid,user.first_name,user.last_name FROM user LEFT JOIN artist ON user.id = artist.user_id WHERE user.role ='artist' and artist.user_id IS NULL;");
+};
+
 /* query user by email */
 const findOneByEmail = ({ email }: { email: string }) => {
   return db
@@ -87,6 +96,7 @@ const userService = {
   updateOne,
   deleteById,
   getTotalCount,
+  findArtistUsers,
 };
 
 export default userService;

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import userService from "../services/user.service";
 import { generatePagination, getPageInfo, handleError } from "../utils/commons";
 import { validateUser } from "../utils/validation-schema";
+import authController from "./auth.controller";
 
 const getById = async (req: Request, res: Response) => {
   try {
@@ -39,19 +40,21 @@ const getAll = async (req: Request, res: Response) => {
   }
 };
 
-const create = async (req: Request, res: Response) => {
+const getAllUserArtists = async (req: Request, res: Response) => {
   try {
-    validateUser(req.body);
-    const [result] = await userService.insertOne(req.body);
-    if (result.affectedRows === 1) {
-      const { password, ...rest } = req.body;
-      res.json({ data: rest, error: null });
-      return;
-    }
-    res.status(400).json({ data: null, error: "Unable to add user" });
+    const [users] = await userService.findArtistUsers();
+    res.json({
+      data: { users },
+      error: null,
+    });
+    return;
   } catch (err) {
     res.status(500).json({ data: null, error: handleError(err) });
   }
+};
+
+const create = async (req: Request, res: Response) => {
+  authController.register(req, res);
 };
 
 const update = async (req: Request, res: Response) => {
@@ -61,7 +64,7 @@ const update = async (req: Request, res: Response) => {
       res.status(400).json({ data: null, error: "Id is required" });
       return;
     }
-    validateUser(req.body);
+    validateUser(req.body, true);
     const [result] = await userService.updateOne(req.body, id);
     if (result.affectedRows === 1) {
       const { password, ...rest } = req.body;
@@ -98,6 +101,7 @@ const userController = {
   create,
   update,
   deleteById,
+  getAllUserArtists,
 };
 
 export default userController;
