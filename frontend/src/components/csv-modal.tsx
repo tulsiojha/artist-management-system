@@ -1,16 +1,15 @@
 "use client";
 import Modal from "./modal";
-import csvParser from "papaparse";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import List from "./list";
 import { usePagination } from "@/hooks/use-pagination";
 import Button from "./button";
-import { baseSchema as artistSchema } from "@/app/dashboard/artists/artist-modal";
 import { toast } from "sonner";
 import handleErrors from "@/utils/handleErrors";
-import { queryClient } from "@/utils/query-client";
-import { formatDateToString } from "@/utils/commons";
+import { formatDateToString, importCSV } from "@/utils/commons";
 import { useRouter } from "next/navigation";
+import { artistSchema } from "@/lib/schemas";
+import { artist } from "@/lib/api-client";
 
 const CSVModal = ({
   open,
@@ -19,6 +18,7 @@ const CSVModal = ({
   open?: boolean;
   openChange?: () => void;
 }) => {
+  const form = useRef<HTMLFormElement>(null);
   const router = useRouter();
   const items = [] as Record<string, string | number | Date>[];
   const itemsPerPage = 7;
@@ -29,48 +29,46 @@ const CSVModal = ({
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target?.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const content = e.target?.result as string;
-        if (content) {
-          csvParser.parse(content, {
-            complete: (results) => {
-              const header = results.data[0] as string[];
-              const body = results.data.slice(1) as string[];
-
-              const data = body.map((b) => {
-                return header.reduce(
-                  (prev, curr, i) => {
-                    const c = curr.trim();
-                    let v;
-                    const ob = b[i].trim();
-                    switch (c) {
-                      case "dob":
-                        v = new Date(ob);
-                        break;
-                      case "first_release_year":
-                      case "no_of_albums_released":
-                      case "user_id":
-                        v = Number(ob);
-                        break;
-                      default:
-                        v = ob;
-                    }
-                    prev[c] = v;
-                    return prev;
-                  },
-                  {} as Record<string, string | number | Date>,
-                );
-              });
-              page.setItems(data);
-            },
-            skipEmptyLines: true,
-          });
-        }
-      };
-      reader.readAsText(file);
+      importCSV({
+        file,
+        onParse: (d) => {
+          page.setItems(d);
+        },
+      });
     }
   };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    setLoading(true);
+    e.preventDefault();
+    e.stopPropagation();
+
+    const a = [];
+    try {
+      for (let i = 0; i < page.items.length; i++) {
+        const item = page.items[i];
+        artistSchema.parse(page.items[i]);
+        a.push({ ...item, dob: formatDateToString(item.dob as string) });
+      }
+      if (a.length) {
+        await artist.createMany({ artists: a }, () => {
+          openChange?.();
+          page.setItems([]);
+          form.current?.reset();
+          router.refresh();
+        });
+      }
+    } catch (err) {
+      toast.error(handleErrors(err), { richColors: true });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    page.setItems([]);
+  }, [open]);
+
   return (
     <Modal
       open={open}
@@ -80,33 +78,9 @@ const CSVModal = ({
       width={page.items.length > 0 ? "750px" : "500px"}
     >
       <form
+        ref={form}
         className="flex flex-col gap-2 p-4"
-        onSubmit={async (e) => {
-          setLoading(true);
-          e.preventDefault();
-          e.stopPropagation();
-
-          const a = [];
-          try {
-            for (let i = 0; i < page.items.length; i++) {
-              const item = page.items[i];
-              artistSchema.parse(page.items[i]);
-              a.push({ ...item, dob: formatDateToString(item.dob as string) });
-            }
-
-            if (a.length) {
-              await queryClient.post("/artist/insert-many", { artists: a });
-              toast.success("Bulk artist add was successful.", {
-                richColors: true,
-              });
-              openChange?.();
-              router.refresh();
-            }
-          } catch (err) {
-            toast.error(handleErrors(err), { richColors: true });
-          }
-          setLoading(false);
-        }}
+        onSubmit={handleSubmit}
       >
         <div className="h-full flex flex-col">
           {page.items.length ? (

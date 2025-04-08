@@ -2,35 +2,16 @@
 import Button from "@/components/button";
 import TextInput from "@/components/input";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { useRouter } from "next/navigation";
-import { GENDER } from "@/utils/types";
-
-const registerSchema = z.object({
-  first_name: z.string().min(2, "must be atleast 2 characters"),
-  last_name: z.string().min(2, "must be atleast 2 characters"),
-  email: z.string().email("invalid email"),
-  password: z.string().min(6, "at least 6 characters are required"),
-  repassword: z.string().min(6, "at least 6 characters are required"),
-  phone: z.string().min(2, "must be atleast 2 characters"),
-  dob: z.string().min(2, "must be atleast 2 characters"),
-  gender: z.nativeEnum(GENDER, {
-    errorMap: (issue) => {
-      switch (issue.code) {
-        case "invalid_type":
-          return { message: "gender is required" };
-        case "invalid_enum_value":
-          return { message: "invalid gender" };
-        default:
-          return { message: issue.message ?? "" };
-      }
-    },
-  }),
-  address: z.string().min(2, "must be atleast 2 characters"),
-});
+import Select from "@/components/select";
+import { formatDateToString, genders } from "@/utils/commons";
+import { registerSchema } from "@/lib/schemas";
+import { USER_ROLE } from "@/utils/types";
+import { user } from "@/lib/api-client";
+import Datepicker from "@/components/date-picker";
 
 type ISchema = z.infer<typeof registerSchema>;
 
@@ -39,18 +20,24 @@ const RegisterForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    control,
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(registerSchema),
   });
 
   const onSubmit = async (e: ISchema) => {
     const { repassword, ...data } = e;
-    await axios.post("/backend/auth/register", {
-      ...data,
-      role: "super_admin",
-    });
-    router.push("/auth/login");
+    return user.register(
+      {
+        ...data,
+        role: USER_ROLE.SUPER_ADMIN,
+        dob: formatDateToString(data.dob),
+      },
+      () => {
+        router.push("/auth/login");
+      },
+    );
   };
 
   return (
@@ -75,18 +62,20 @@ const RegisterForm = () => {
           />
         </div>
         <div className="flex flex-row items-start gap-2">
-          <TextInput
-            label="Date of Birth"
-            placeholder="Enter your dob"
-            error={errors.dob?.message}
-            {...register("dob")}
+          <Controller
+            name="dob"
+            control={control}
+            render={({ field }) => (
+              <Datepicker
+                label="Dob"
+                placeholder="Enter dob"
+                error={errors.dob?.message}
+                value={formatDateToString(field.value)}
+                onChange={(e) => field.onChange(e)}
+              />
+            )}
           />
-          <TextInput
-            label="Gender"
-            placeholder="Enter your gender"
-            error={errors.gender?.message}
-            {...register("gender")}
-          />
+          <Select label="Gender" items={genders} {...register("gender")} />
         </div>
         <TextInput
           label="Phone"
@@ -122,7 +111,7 @@ const RegisterForm = () => {
           {...register("repassword")}
         />
       </div>
-      <Button variant="primary" type="submit">
+      <Button variant="primary" type="submit" loading={isSubmitting}>
         Register
       </Button>
       <div className="text-center">

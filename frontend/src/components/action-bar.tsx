@@ -9,7 +9,7 @@ const ActionBar = ({
 }) => {
   return (
     <div className="flex items-center h-16 justify-between">
-      <div className="font-bold text-2xl">{title}</div>
+      <div className="font-bold text-xl">{title}</div>
       <div>{action}</div>
     </div>
   );

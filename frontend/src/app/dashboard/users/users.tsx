@@ -2,16 +2,15 @@
 import ActionBar from "@/components/action-bar";
 import Button from "@/components/button";
 import List from "@/components/list";
-import { formatDate } from "@/utils/commons";
+import { formatDate, genders, roles } from "@/utils/commons";
 import { IUser, IUserResponse } from "@/utils/types";
-import { Pencil, Plus, Trash } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import UserModal from "./UserModal";
 import DeleteModal from "@/components/delete-modal";
-import axios from "axios";
-import { toast } from "sonner";
-import handleErrors from "@/utils/handleErrors";
+import { user } from "@/lib/api-client";
+import ItemAction from "@/components/item-action";
 
 const Users = ({ data }: IUserResponse) => {
   const router = useRouter();
@@ -45,13 +44,13 @@ const Users = ({ data }: IUserResponse) => {
         }}
         page={Number(page || 1)}
         columns={[
-          { id: "id", label: "User Id", width: "100px" },
+          { id: "id", label: "User Id", width: "80px" },
           { id: "name", label: "Full name", width: "200px" },
-          { id: "email", label: "Email", width: "300px" },
-          { id: "role", label: "Role", width: "180px" },
+          { id: "email", label: "Email", width: "280px" },
+          { id: "role", label: "Role", width: "150px" },
           { id: "gender", label: "Gender", width: "180px" },
           { id: "created_at", label: "Created At", width: "180px" },
-          { id: "actions", label: "Actions" },
+          { id: "actions", label: "Actions", width: "70px" },
         ]}
         rows={data.users.map((user) => ({
           id: user.id,
@@ -59,31 +58,25 @@ const Users = ({ data }: IUserResponse) => {
             id: { render: () => user.id },
             name: { render: () => `${user.first_name} ${user.last_name}` },
             email: { render: () => user.email },
-            role: { render: () => user.role },
-            gender: { render: () => user.gender },
+            role: {
+              render: () => roles.find((f) => f.value === user.role)?.label,
+            },
+            gender: {
+              render: () => genders.find((f) => f.value === user.gender)?.label,
+            },
             created_at: { render: () => formatDate(user.created_at) },
             actions: {
               render: () => (
-                <div className="flex flex-row items-center gap-2">
-                  <button
-                    onClick={() => {
-                      setSelectedUser(user);
-                      setDataModalOpen(true);
-                    }}
-                    className="cursor-pointer p-1.5 hover:bg-gray-200 rounded"
-                  >
-                    <Pencil size={14} />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setSelectedUser(user);
-                      setDeleteModalOpen(true);
-                    }}
-                    className="cursor-pointer p-1.5 hover:bg-gray-200 rounded text-red-600"
-                  >
-                    <Trash size={14} />
-                  </button>
-                </div>
+                <ItemAction
+                  onDelete={() => {
+                    setSelectedUser(user);
+                    setDeleteModalOpen(true);
+                  }}
+                  onEdit={() => {
+                    setSelectedUser(user);
+                    setDataModalOpen(true);
+                  }}
+                />
               ),
             },
           },
@@ -106,23 +99,10 @@ const Users = ({ data }: IUserResponse) => {
         resource="user"
         onSubmit={async () => {
           if (selectedUser) {
-            try {
-              const res = await axios.delete(
-                `/backend/user/${selectedUser.id}`,
-              );
-              toast.success("Deleting user is successful", {
-                richColors: true,
-                closeButton: true,
-              });
+            return user.delete(selectedUser.id, () => {
               setDeleteModalOpen(false);
               router.refresh();
-              return res;
-            } catch (err) {
-              toast.error(handleErrors(err), {
-                richColors: true,
-                closeButton: true,
-              });
-            }
+            });
           }
         }}
       />

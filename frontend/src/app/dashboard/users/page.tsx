@@ -1,9 +1,13 @@
 import { user } from "@/lib/api";
 import Users from "./users";
 
-const UserPage = async (props) => {
-  const sp = await props.searchParams;
-  const users = await user.list(sp?.page);
+const UserPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
+  const page = Number((await searchParams).page) || 0;
+  const users = await user.list(page);
   return <Users data={users.data} />;
 };
 

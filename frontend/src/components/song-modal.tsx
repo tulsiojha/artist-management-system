@@ -5,39 +5,13 @@ import * as z from "zod";
 import { GENRE, ISong } from "@/utils/types";
 import Select from "@/components/select";
 import FormModal from "@/components/form-modal";
-import { toast } from "sonner";
-import handleErrors from "@/utils/handleErrors";
 import { useRouter } from "next/navigation";
-import { song } from "@/lib/api";
 import useAuth from "@/hooks/use-auth";
-import { queryClient } from "@/utils/query-client";
+import { songSchema } from "@/lib/schemas";
+import { genre, toast } from "@/utils/commons";
+import { song } from "@/lib/api-client";
 
-const baseSchema = z.object({
-  title: z.string().min(2, "must be atleast 2 characters"),
-  album_name: z.string(),
-  genre: z.nativeEnum(GENRE, {
-    errorMap: (issue) => {
-      switch (issue.code) {
-        case "invalid_type":
-          return { message: "genre is required" };
-        case "invalid_enum_value":
-          return { message: "invalid genre" };
-        default:
-          return { message: issue.message ?? "" };
-      }
-    },
-  }),
-});
-
-type ISchema = z.infer<typeof baseSchema>;
-
-const genre = [
-  { label: "Rnb", value: "rnb" },
-  { label: "Country", value: "country" },
-  { label: "Classic", value: "classic" },
-  { label: "Rock", value: "rock" },
-  { label: "Jazz", value: "jazz" },
-];
+type ISchema = z.infer<typeof songSchema>;
 
 const SongModal = ({
   initialValues,
@@ -54,32 +28,27 @@ const SongModal = ({
   const user = useAuth();
 
   const onSubmit = async (e: ISchema) => {
-    try {
-      if (!user?.artist_id) {
-        throw Error("Invalid artist");
-      }
-      const payload = { ...e, artist_id: user?.artist_id };
-
-      if (update) {
-        await queryClient.post(`/song/${String(initialValues.id)}`, payload);
-      } else {
-        await queryClient.post("/song", payload);
-      }
-
-      toast.success("Song created successfully", {
-        richColors: true,
-        closeButton: true,
+    if (!user?.artist_id) {
+      toast("You are not added to artist list", "error");
+      return;
+    }
+    const payload = { ...e, artist_id: user?.artist_id };
+    if (update) {
+      return song.update(initialValues.id, payload, () => {
+        openChange?.(false);
+        router.refresh();
       });
-      openChange?.(false);
-      router.refresh();
-    } catch (err) {
-      toast.error(handleErrors(err), { richColors: true, closeButton: true });
+    } else {
+      return song.create(payload, () => {
+        openChange?.(false);
+        router.refresh();
+      });
     }
   };
 
   return (
     <FormModal
-      schema={baseSchema}
+      schema={songSchema}
       onSubmit={onSubmit}
       initialValues={
         initialValues

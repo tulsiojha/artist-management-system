@@ -5,15 +5,9 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import handleErrors from "@/utils/handleErrors";
-
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-});
+import { loginSchema } from "@/lib/schemas";
+import { user } from "@/lib/api-client";
 
 type ISchema = z.infer<typeof loginSchema>;
 
@@ -28,14 +22,9 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (e: ISchema) => {
-    try {
-      await axios.post("/backend/auth/login", {
-        ...e,
-      });
+    return user.login(e, () => {
       router.push("/dashboard");
-    } catch (err) {
-      toast.error(handleErrors(err), { richColors: true, closeButton: true });
-    }
+    });
   };
 
   return (

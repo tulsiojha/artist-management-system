@@ -2,17 +2,16 @@
 import DeleteModal from "@/components/delete-modal";
 import List from "@/components/list";
 import { formatDate } from "@/utils/commons";
-import handleErrors from "@/utils/handleErrors";
 import { ISong, ISongResponse, USER_ROLE } from "@/utils/types";
-import axios from "axios";
-import { Pencil, Plus, Trash } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 import ActionBar from "@/components/action-bar";
 import Button from "@/components/button";
 import useAuth from "@/hooks/use-auth";
 import SongModal from "./song-modal";
+import { song } from "@/lib/api-client";
+import ItemAction from "./item-action";
 
 const Songs = ({ data }: { data: ISongResponse["data"]; artist?: number }) => {
   const router = useRouter();
@@ -71,26 +70,16 @@ const Songs = ({ data }: { data: ISongResponse["data"]; artist?: number }) => {
               ? {
                   actions: {
                     render: () => (
-                      <div className="flex flex-row items-center gap-2">
-                        <button
-                          onClick={() => {
-                            setSelectedSong(song);
-                            setDataModalOpen(true);
-                          }}
-                          className="cursor-pointer p-1.5 hover:bg-gray-200 rounded"
-                        >
-                          <Pencil size={14} />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedSong(song);
-                            setDeleteModalOpen(true);
-                          }}
-                          className="cursor-pointer p-1.5 hover:bg-gray-200 rounded text-red-600"
-                        >
-                          <Trash size={14} />
-                        </button>
-                      </div>
+                      <ItemAction
+                        onDelete={() => {
+                          setSelectedSong(song);
+                          setDeleteModalOpen(true);
+                        }}
+                        onEdit={() => {
+                          setSelectedSong(song);
+                          setDataModalOpen(true);
+                        }}
+                      />
                     ),
                   },
                 }
@@ -115,23 +104,10 @@ const Songs = ({ data }: { data: ISongResponse["data"]; artist?: number }) => {
         resource="song"
         onSubmit={async () => {
           if (selectedSong) {
-            try {
-              const res = await axios.delete(
-                `/backend/song/${selectedSong.id}`,
-              );
-              toast.success("Deleting song is successful", {
-                richColors: true,
-                closeButton: true,
-              });
+            return song.delete(selectedSong.id, () => {
               setDeleteModalOpen(false);
               router.refresh();
-              return res;
-            } catch (err) {
-              toast.error(handleErrors(err), {
-                richColors: true,
-                closeButton: true,
-              });
-            }
+            });
           }
         }}
       />

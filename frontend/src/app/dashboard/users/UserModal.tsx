@@ -2,101 +2,19 @@
 import Button from "@/components/button";
 import TextInput from "@/components/input";
 import * as z from "zod";
-import axios from "axios";
 import { GENDER, IUser, USER_ROLE } from "@/utils/types";
 import Select from "@/components/select";
 import FormModal from "@/components/form-modal";
-import { toast } from "sonner";
-import handleErrors from "@/utils/handleErrors";
-import { formatDateToString } from "@/utils/commons";
+import { formatDateToString, genders, roles } from "@/utils/commons";
 import { Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
-
-const baseSchema = {
-  first_name: z.string().min(2, "must be atleast 2 characters"),
-  last_name: z.string().min(2, "must be atleast 2 characters"),
-  email: z.string().email("invalid email"),
-  phone: z.string().min(2, "must be atleast 2 characters"),
-  dob: z.date(),
-  gender: z.nativeEnum(GENDER, {
-    errorMap: (issue) => {
-      switch (issue.code) {
-        case "invalid_type":
-          return { message: "gender is required" };
-        case "invalid_enum_value":
-          return { message: "invalid gender" };
-        default:
-          return { message: issue.message ?? "" };
-      }
-    },
-  }),
-  role: z.nativeEnum(USER_ROLE, {
-    errorMap: (issue) => {
-      switch (issue.code) {
-        case "invalid_type":
-          return { message: "role is required" };
-        case "invalid_enum_value":
-          return { message: "role gender" };
-        default:
-          return { message: issue.message ?? "" };
-      }
-    },
-  }),
-  address: z.string().min(2, "must be atleast 2 characters"),
-};
-
-const updateUserSchema = z.object(baseSchema);
-
-const createUserSchema = z
-  .object({
-    ...baseSchema,
-    password: z.string().min(6, "at least 6 characters are required"),
-    repassword: z.string().min(6, "at least 6 characters are required"),
-  })
-  .superRefine(({ password, repassword }, ctx) => {
-    if (repassword !== password) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Password did not match",
-        path: ["repassword"],
-      });
-    }
-  });
+import { userCreateSchema, userUpdateSchema } from "@/lib/schemas";
+import { user } from "@/lib/api-client";
+import Datepicker from "@/components/date-picker";
 
 type ISchema<T extends boolean> = T extends true
-  ? z.infer<typeof updateUserSchema>
-  : z.infer<typeof createUserSchema>;
-
-const roles = [
-  {
-    label: "Super Admin",
-    value: "super_admin",
-  },
-  {
-    label: "Artist Manager",
-    value: "artist_manager",
-  },
-  {
-    label: "Artist",
-    value: "artist",
-  },
-];
-
-const genders = [
-  {
-    label: "Male",
-    value: "m",
-  },
-  {
-    label: "Female",
-    value: "f",
-  },
-
-  {
-    label: "Other",
-    value: "o",
-  },
-];
+  ? z.infer<typeof userUpdateSchema>
+  : z.infer<typeof userCreateSchema>;
 
 const UserModal = ({
   initialValues,
@@ -111,34 +29,29 @@ const UserModal = ({
   const update = !!initialValues;
 
   const onSubmit = async (e: ISchema<typeof update>) => {
-    try {
-      const { dob, ...data } = e;
-      const formattedDate = new Date(dob).toISOString().slice(0, 10);
+    const { dob, ...data } = e;
+    const formattedDate = new Date(dob).toISOString().slice(0, 10);
+    console.log(formattedDate);
+    const payload = { ...data, dob: formattedDate };
+    //@ts-ignore
+    const { repassword, ...createPayload } = payload;
 
-      const payload = { ...data, dob: formattedDate };
-
-      if (update) {
-        await axios.post(`/backend/user/${initialValues.id}`, payload);
-      } else {
-        //@ts-ignore
-        const { repassword, ...createPayload } = payload;
-        await axios.post("/backend/user/", createPayload);
-      }
-
-      toast.success("User created successfully", {
-        richColors: true,
-        closeButton: true,
+    if (update) {
+      return user.update(initialValues.id, payload, () => {
+        openChange?.(false);
+        router.refresh();
       });
-      openChange?.(false);
-      router.refresh();
-    } catch (err) {
-      toast.error(handleErrors(err), { richColors: true, closeButton: true });
+    } else {
+      return user.create(createPayload, () => {
+        openChange?.(false);
+        router.refresh();
+      });
     }
   };
 
   return (
     <FormModal
-      schema={update ? updateUserSchema : createUserSchema}
+      schema={update ? userUpdateSchema : userCreateSchema}
       onSubmit={onSubmit}
       initialValues={
         initialValues
@@ -176,12 +89,12 @@ const UserModal = ({
                   name="dob"
                   control={control}
                   render={({ field }) => (
-                    <TextInput
-                      label="Date of Birth"
-                      type="date"
-                      value={formatDateToString(field.value)}
-                      onChange={(e) => field.onChange(new Date(e.target.value))}
+                    <Datepicker
+                      label="Dob"
+                      placeholder="Enter dob"
                       error={errors.dob?.message}
+                      value={formatDateToString(field.value)}
+                      onChange={(e) => field.onChange(e)}
                     />
                   )}
                 />

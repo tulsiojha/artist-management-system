@@ -1,19 +1,19 @@
 "use client";
 import DeleteModal from "@/components/delete-modal";
 import List from "@/components/list";
-import { formatDate } from "@/utils/commons";
-import handleErrors from "@/utils/handleErrors";
+import { exportCSV, formatDate, genders } from "@/utils/commons";
 import { IArtist, IArtistResponse, USER_ROLE } from "@/utils/types";
-import axios from "axios";
-import { FileArchive, Pencil, Plus, Trash } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 import ArtistModal from "./artist-modal";
 import ActionBar from "@/components/action-bar";
 import Button from "@/components/button";
 import useAuth from "@/hooks/use-auth";
 import CSVModal from "@/components/csv-modal";
+import SettingMenu from "@/components/setting-menu";
+import { artist } from "@/lib/api-client";
+import ItemAction from "@/components/item-action";
 
 const Artists = ({ data }: IArtistResponse) => {
   const router = useRouter();
@@ -34,15 +34,12 @@ const Artists = ({ data }: IArtistResponse) => {
         action={
           isArtistManager ? (
             <div className="flex flex-row items-center gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => {
+              <SettingMenu
+                handleImport={() => {
                   setCSVModalOpen(true);
                 }}
-              >
-                <FileArchive size={14} />
-                Import CSV
-              </Button>
+                handleExport={exportCSV}
+              />
               <Button
                 onClick={() => {
                   setSelectedArtist(undefined);
@@ -85,7 +82,9 @@ const Artists = ({ data }: IArtistResponse) => {
           },
           columns: {
             name: { render: () => art.name },
-            gender: { render: () => art.gender },
+            gender: {
+              render: () => genders.find((f) => f.value === art.gender)?.label,
+            },
             first_release_year: { render: () => art.first_release_year },
             no_of_albums_released: {
               render: () => art.no_of_albums_released || "-",
@@ -95,28 +94,18 @@ const Artists = ({ data }: IArtistResponse) => {
               ? {
                   actions: {
                     render: () => (
-                      <div className="flex flex-row items-center gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedArtist(art);
-                            setDataModalOpen(true);
-                          }}
-                          className="cursor-pointer p-1.5 hover:bg-gray-200 rounded"
-                        >
-                          <Pencil size={14} />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedArtist(art);
-                            setDeleteModalOpen(true);
-                          }}
-                          className="cursor-pointer p-1.5 hover:bg-gray-200 rounded text-red-600"
-                        >
-                          <Trash size={14} />
-                        </button>
-                      </div>
+                      <ItemAction
+                        onDelete={(e) => {
+                          e.stopPropagation();
+                          setSelectedArtist(art);
+                          setDeleteModalOpen(true);
+                        }}
+                        onEdit={(e) => {
+                          e.stopPropagation();
+                          setSelectedArtist(art);
+                          setDataModalOpen(true);
+                        }}
+                      />
                     ),
                   },
                 }
@@ -132,13 +121,7 @@ const Artists = ({ data }: IArtistResponse) => {
           setDataModalOpen(false);
         }}
       />
-      <CSVModal
-        open={csvModalOpen}
-        openChange={() => setCSVModalOpen(false)}
-        onSubmit={async (data) => {
-          console.log(data);
-        }}
-      />
+      <CSVModal open={csvModalOpen} openChange={() => setCSVModalOpen(false)} />
       <DeleteModal
         open={deleteModalOpen}
         openChange={() => {
@@ -148,23 +131,10 @@ const Artists = ({ data }: IArtistResponse) => {
         resource="artist"
         onSubmit={async () => {
           if (selectedArtist) {
-            try {
-              const res = await axios.delete(
-                `/backend/artist/${selectedArtist.id}`,
-              );
-              toast.success("Deleting artist is successful", {
-                richColors: true,
-                closeButton: true,
-              });
+            return artist.delete(selectedArtist.id, () => {
               setDeleteModalOpen(false);
               router.refresh();
-              return res;
-            } catch (err) {
-              toast.error(handleErrors(err), {
-                richColors: true,
-                closeButton: true,
-              });
-            }
+            });
           }
         }}
       />

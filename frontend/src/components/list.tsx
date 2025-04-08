@@ -46,7 +46,7 @@ const List = ({
                 key={row.id}
                 className={cn(
                   "flex flex-row items-center w-full px-2 py-2 last:border-0 border-b-1 border-gray-200",
-                  { "cursor-pointer hover:bg-gray-200": !!row.onClick },
+                  { "cursor-pointer hover:bg-gray-100": !!row.onClick },
                 )}
                 onClick={row.onClick}
               >

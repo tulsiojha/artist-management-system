@@ -2,64 +2,19 @@
 import Button from "@/components/button";
 import TextInput from "@/components/input";
 import * as z from "zod";
-import axios from "axios";
 import { GENDER, IArtist, IUnlinkedUser } from "@/utils/types";
 import Select from "@/components/select";
 import FormModal from "@/components/form-modal";
-import { toast } from "sonner";
 import handleErrors from "@/utils/handleErrors";
-import { formatDateToString } from "@/utils/commons";
+import { formatDateToString, genders, toast } from "@/utils/commons";
 import { Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { artistSchema } from "@/lib/schemas";
+import { artist, user } from "@/lib/api-client";
+import Datepicker from "@/components/date-picker";
 
-export const baseSchema = z.object({
-  name: z.string().min(2, "must be atleast 2 characters"),
-  dob: z.date(),
-  gender: z.nativeEnum(GENDER, {
-    errorMap: (issue) => {
-      switch (issue.code) {
-        case "invalid_type":
-          return { message: "gender is required" };
-        case "invalid_enum_value":
-          return { message: "invalid gender" };
-        default:
-          return { message: issue.message ?? "" };
-      }
-    },
-  }),
-  address: z.string().min(2, "must be atleast 2 characters"),
-  first_release_year: z
-    .number()
-    .min(1900, { message: "Year must be 1900 or later" })
-    .max(new Date().getFullYear(), { message: "Year cannot be in the future" }),
-  no_of_albums_released: z.number().optional().nullable().nullish(),
-  user_id: z.number(),
-});
-
-type ISchema = z.infer<typeof baseSchema>;
-
-const genders = [
-  {
-    label: "Male",
-    value: "m",
-  },
-  {
-    label: "Female",
-    value: "f",
-  },
-
-  {
-    label: "Other",
-    value: "o",
-  },
-];
-
-const fetchUnlinkedUsers = async () => {
-  return (
-    await axios.get("/backend/user/unlinked-user", { withCredentials: true })
-  ).data;
-};
+type ISchema = z.infer<typeof artistSchema>;
 
 const ArtistModal = ({
   initialValues,
@@ -80,10 +35,10 @@ const ArtistModal = ({
     (async () => {
       try {
         setUnlinkedUsersLoading(true);
-        const res = await fetchUnlinkedUsers();
+        const res = await user.fetchUnlinkedUsers();
         setUnlinkedUsers(res.data.users);
       } catch (err) {
-        toast.error(handleErrors(err), { richColors: true });
+        toast(handleErrors(err), "error");
       } finally {
         setUnlinkedUsersLoading(false);
       }
@@ -91,39 +46,26 @@ const ArtistModal = ({
   }, [open]);
 
   const onSubmit = async (e: ISchema) => {
-    try {
-      const { dob, ...data } = e;
-      const formattedDate = new Date(dob).toISOString().slice(0, 10);
+    const { dob, ...data } = e;
+    const formattedDate = new Date(dob).toISOString().slice(0, 10);
+    const payload = { ...data, dob: formattedDate };
 
-      const payload = { ...data, dob: formattedDate };
-
-      if (update) {
-        await axios.post(`/backend/artist/${initialValues.id}`, payload);
-        toast.success("Artist updated successfully", {
-          richColors: true,
-          closeButton: true,
-        });
-      } else {
-        //@ts-ignore
-        await axios.post("/backend/artist/", payload);
-        toast.success("Artist created successfully", {
-          richColors: true,
-          closeButton: true,
-        });
-      }
-
-      openChange?.(false);
-      router.refresh();
-    } catch (err) {
-      toast.error(handleErrors(err), { richColors: true, closeButton: true });
+    if (update) {
+      return artist.update(initialValues.id, payload, () => {
+        openChange?.(false);
+        router.refresh();
+      });
+    } else {
+      return artist.create(payload, () => {
+        openChange?.(false);
+        router.refresh();
+      });
     }
   };
 
-  console.log(initialValues);
-
   return (
     <FormModal
-      schema={baseSchema}
+      schema={artistSchema}
       onSubmit={onSubmit}
       initialValues={
         initialValues
@@ -159,12 +101,12 @@ const ArtistModal = ({
                   name="dob"
                   control={control}
                   render={({ field }) => (
-                    <TextInput
-                      label="Date of Birth"
-                      type="date"
-                      value={formatDateToString(field.value)}
-                      onChange={(e) => field.onChange(e.target.valueAsDate)}
+                    <Datepicker
+                      label="Dob"
+                      placeholder="Enter dob"
                       error={errors.dob?.message}
+                      value={formatDateToString(field.value)}
+                      onChange={(e) => field.onChange(e)}
                     />
                   )}
                 />

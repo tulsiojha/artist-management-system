@@ -27,6 +27,7 @@ const FormModal = <T extends z.ZodSchema<any>>({
   height,
   width,
 }: IFormModal<T>) => {
+  console.log(initialValues);
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: initialValues,
