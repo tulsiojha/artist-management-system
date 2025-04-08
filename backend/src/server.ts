@@ -20,14 +20,14 @@ declare global {
 const port = config.PORT || 4000;
 
 const corsOptions = {
-  origin: "http://localhost:3000/",
+  origin: ["http://localhost:3000", "https://ams.ojhabikash.com.np"], // Replace with your Next.js frontend URL
   credentials: true,
 };
 
 const app = express();
 
 app.use(cookieParser());
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -35,6 +35,9 @@ app.use("/user", authenticate, userRouter);
 app.use("/artist", authenticate, artistRouter);
 app.use("/song", authenticate, songRouter);
 app.use("/auth", authRouter);
+app.get("/healthy", (req, res) => {
+  res.status(200).send("OK");
+});
 
 app.listen(port, () => {
   console.log(`Server successfully started at port: ${port}`);

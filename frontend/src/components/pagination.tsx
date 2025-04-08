@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/utils/commons";
-import { ComponentProps, useState } from "react";
+import { ComponentProps } from "react";
 
 const getPagesToRender = (page: number, totalPages: number) => {
   const pages = [];

@@ -18,7 +18,7 @@ const Select = (
         className="w-full bg-secondary border-2 border-secondary-border rounded text-sm px-2 py-1 outline-none ring-offset-1 focus:ring-2 ring-primary-outline"
         {...rest}
       >
-        {props.items.map((item) => (
+        {items.map((item) => (
           <option key={item.value} value={item.value}>
             {item.label}
           </option>

@@ -27,7 +27,7 @@ const RegisterForm = () => {
   });
 
   const onSubmit = async (e: ISchema) => {
-    const { repassword, ...data } = e;
+    const { repassword: _rep, ...data } = e;
     return user.register(
       {
         ...data,

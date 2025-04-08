@@ -1,11 +1,16 @@
 import Songs from "@/components/song";
 import { song } from "@/lib/api";
 
-const Page = async (props) => {
-  const params = await props.params;
-  const id = params.id;
-  const sp = await props.searchParams;
-  const songs = await song.listByArtist(id, sp?.page);
+const Page = async ({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: number }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
+  const id = (await params).id;
+  const page = Number((await searchParams).page || "0");
+  const songs = await song.listByArtist(id, page);
   return <Songs artist={id} data={songs.data} />;
 };
 

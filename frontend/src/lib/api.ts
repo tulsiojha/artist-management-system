@@ -1,5 +1,4 @@
 import { PAGINATION_LIMIT } from "@/utils/constants";
-import { queryClient } from "@/utils/query-client";
 import { queryServer } from "@/utils/query-server";
 import {
   IArtistResponse,
@@ -10,11 +9,12 @@ import {
 } from "@/utils/types";
 import { redirect } from "next/navigation";
 
-export const baseUrl = "http://localhost:8000";
+export const baseUrl = process.env.BACKEND_URL;
 
 export const currentUser = async () => {
   try {
     const res = await queryServer(`${baseUrl}/auth/currentuser`);
+    console.log(res);
     if (!res || res?.error) {
       return null;
     }

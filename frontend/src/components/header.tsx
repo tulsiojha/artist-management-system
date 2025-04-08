@@ -28,7 +28,7 @@ const Header = () => {
   );
 
   return (
-    <nav className="border-b-2 border-tertiary-border bg-surface h-[68px] flex items-center px-5">
+    <nav className="border-b-2 border-tertiary-border bg-surface h-[68px] flex items-center px-5 lg:hidden">
       <div className="flex flex-row justify-between items-center w-full">
         <div className="font-bold text-primary">AMS</div>
         <button

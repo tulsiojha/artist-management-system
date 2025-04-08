@@ -12,7 +12,7 @@ const user = {
       toast(handleErrors(err), "success");
     }
   },
-  register: async (data: Record<string, any>, onSuccess?: () => void) => {
+  register: async (data: Record<string, unknown>, onSuccess?: () => void) => {
     try {
       await queryClient.post("/auth/register", data);
       toast(
@@ -24,7 +24,7 @@ const user = {
       toast(handleErrors(err), "error");
     }
   },
-  login: async (data: Record<string, any>, onSuccess?: () => void) => {
+  login: async (data: Record<string, unknown>, onSuccess?: () => void) => {
     try {
       await queryClient.post("/auth/login", data);
       toast("Successfully logged in.", "success");
@@ -33,7 +33,7 @@ const user = {
       toast(handleErrors(err), "error");
     }
   },
-  create: async (data: Record<string, any>, onSuccess?: () => void) => {
+  create: async (data: Record<string, unknown>, onSuccess?: () => void) => {
     try {
       await queryClient.post("/user/", data);
       toast("User created successfully", "success");
@@ -44,7 +44,7 @@ const user = {
   },
   update: async (
     id: number,
-    data: Record<string, any>,
+    data: Record<string, unknown>,
     onSuccess?: () => void,
   ) => {
     try {
@@ -71,7 +71,7 @@ const user = {
 };
 
 const artist = {
-  create: async (data: Record<string, any>, onSuccess?: () => void) => {
+  create: async (data: Record<string, unknown>, onSuccess?: () => void) => {
     try {
       await queryClient.post("/artist/", data);
       toast("Artist created successfully", "success");
@@ -80,7 +80,7 @@ const artist = {
       toast(handleErrors(err), "error");
     }
   },
-  createMany: async (data: Record<string, any>, onSuccess?: () => void) => {
+  createMany: async (data: Record<string, unknown>, onSuccess?: () => void) => {
     try {
       await queryClient.post("/artist/insert-many", data);
       toast("Bulk artist adding was successful.", "success");
@@ -91,7 +91,7 @@ const artist = {
   },
   update: async (
     id: number,
-    data: Record<string, any>,
+    data: Record<string, unknown>,
     onSuccess?: () => void,
   ) => {
     try {
@@ -115,7 +115,7 @@ const artist = {
 };
 
 const song = {
-  create: async (data: Record<string, any>, onSuccess?: () => void) => {
+  create: async (data: Record<string, unknown>, onSuccess?: () => void) => {
     try {
       await queryClient.post("/song", data);
       toast("Song created successfully", "success");
@@ -126,7 +126,7 @@ const song = {
   },
   update: async (
     id: number,
-    data: Record<string, any>,
+    data: Record<string, unknown>,
     onSuccess?: () => void,
   ) => {
     try {

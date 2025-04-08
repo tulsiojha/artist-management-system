@@ -31,10 +31,9 @@ const UserModal = ({
   const onSubmit = async (e: ISchema<typeof update>) => {
     const { dob, ...data } = e;
     const formattedDate = new Date(dob).toISOString().slice(0, 10);
-    console.log(formattedDate);
     const payload = { ...data, dob: formattedDate };
     //@ts-ignore
-    const { repassword, ...createPayload } = payload;
+    const { repassword: _, ...createPayload } = payload;
 
     if (update) {
       return user.update(initialValues.id, payload, () => {
