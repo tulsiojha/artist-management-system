@@ -134,7 +134,7 @@ const CSVModal = ({
             <div className="flex items-center justify-center w-full">
               <label
                 htmlFor="file-upload"
-                className="flex flex-col items-center justify-center w-full max-w-xs h-32 border-2 border-dashed rounded-2xl cursor-pointer bg-gray-50 hover:bg-gray-100 border-gray-300 transition"
+                className="flex flex-col items-center justify-center w-full max-w-xs h-32 border-2 border-dashed rounded-2xl cursor-pointer bg-surface hover:bg-surface-hover border-surface-border transition"
               >
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <svg
@@ -152,10 +152,10 @@ const CSVModal = ({
                       d="M7 16V4m0 0L3 8m4-4l4 4m5 4v8m0 0l-4-4m4 4l4-4"
                     ></path>
                   </svg>
-                  <p className="mb-2 text-sm text-gray-500">
+                  <p className="mb-2 text-sm text-text-surface">
                     <span className="font-semibold">Click to upload</span>
                   </p>
-                  <p className="text-xs text-gray-500">.csv</p>
+                  <p className="text-xs text-text-surface">.csv</p>
                 </div>
                 <input
                   id="file-upload"

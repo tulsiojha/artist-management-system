@@ -21,6 +21,12 @@ const items = [
     to: "/dashboard/artists/",
     roles: ["super_admin", "artist_manager"],
   },
+  {
+    name: "Songs",
+    icon: <ShieldUser size={16} />,
+    to: "/dashboard/songs/",
+    roles: ["artist"],
+  },
 ];
 const Sidebar = () => {
   const user = useAuth();
@@ -30,13 +36,11 @@ const Sidebar = () => {
     [user],
   );
   return (
-    <nav className="border-r-1 border-gray-200 flex flex-col px-4 bg-[#fbf9f7]">
+    <nav className="flex flex-col px-4 bg-tertiary">
       <div className="font-bold text-2xl py-5 flex items-center text-primary">
         AMS
       </div>
-      {user?.role !== USER_ROLE.ARTIST ? (
-        <div className="text-sm text-black/50 mb-3">Menu</div>
-      ) : null}
+      <div className="text-sm text-text-secondary/50 mb-3">Menu</div>
       <ul className="flex-1">
         {roleItems().map((item) => (
           <li key={item.name}>
@@ -45,7 +49,8 @@ const Sidebar = () => {
               className={cn(
                 "px-3 py-2 flex flex-row gap-2 items-center rounded-lg",
                 {
-                  "bg-blue-100": pathname.includes(item.to),
+                  "bg-tertiary-active": pathname.includes(item.to),
+                  "hover:bg-surface-hover": !pathname.includes(item.to),
                 },
               )}
             >

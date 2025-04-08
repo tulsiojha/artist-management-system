@@ -18,11 +18,11 @@ const Button = ({
       className={cn(
         "px-2 py-1  outline-none border-2  ring-offset-1 focus:ring-2 rounded cursor-pointer",
         {
-          "border-primary-border bg-primary focus:ring-primary-outline hover:bg-primary-hover text-white":
+          "border-primary-border bg-primary focus:ring-primary-outline hover:bg-primary-hover text-text-primary":
             variant === "primary",
-          "border-gray-200 bg-white focus:ring-primary-outline hover:bg-gray-50 text-black":
+          "border-secondary-border bg-secondary focus:ring-secondary-outline hover:bg-secondary-hover text-text-secondary":
             variant === "secondary",
-          "border-red-700 bg-red-600 focus:ring-red-300 hover:bg-red-700 text-white":
+          "border-danger-border bg-danger focus:ring-danger-outline hover:bg-danger-hover text-text-danger":
             variant === "danger",
           "w-full": block,
         },

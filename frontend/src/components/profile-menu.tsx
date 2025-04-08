@@ -27,7 +27,7 @@ const ProfileMenu = () => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <button className="border-t-1 -mx-4 px-2 border-gray-200 py-2 flex flex-row items-center gap-2 cursor-pointer hover:bg-gray-100">
+        <button className="border-t-1 -mx-4 px-2 border-tertiary-border py-2 flex flex-row items-center gap-2 cursor-pointer hover:bg-tertiary-hover">
           <div className="font-bold rounded-full flex items-center justify-center bg-pink-400 h-10 w-10 text-white">
             {getInitials(u)}
           </div>
@@ -45,11 +45,11 @@ const ProfileMenu = () => {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="min-w-[220px] rounded-md bg-[#fbf9f7] border-1 border-gray-300 p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform]"
+          className="min-w-[220px] rounded-md bg-secondary border-1 border-secondary-border p-[5px] shadow-2xl will-change-[opacity,transform]"
           sideOffset={5}
         >
           <DropdownMenu.Item
-            className="cursor-pointer group relative flex select-none flex-row items-center gap-2 p-2 rounded-[3px] leading-none text-black outline-none data-[disabled]:pointer-events-none hover:bg-gray-200"
+            className="cursor-pointer group relative flex select-none flex-row items-center gap-2 p-2 rounded-[3px] leading-none text-text-secondary outline-none data-[disabled]:pointer-events-none hover:bg-surface-hover"
             onSelect={handleLogout}
           >
             <PowerCircle size={16} />

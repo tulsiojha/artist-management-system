@@ -24,8 +24,8 @@ const List = ({
   perPage?: number;
 }) => {
   return (
-    <div className="w-full flex flex-col flex-1 rounded border-1 border-gray-300 overflow-hidden">
-      <div className="flex flex-row items-center w-full px-2 py-2 border-b-2 border-gray-300 bg-gray-200 text-gray-600 font-bold text-sm">
+    <div className="w-full flex flex-col flex-1 rounded border-2 border-surface-border overflow-hidden">
+      <div className="flex flex-row items-center w-full px-2 py-2 border-b-2 border-surface-border bg-surface text-gray-600 font-bold text-sm">
         {columns.map((col) => {
           return (
             <div
@@ -45,8 +45,8 @@ const List = ({
               <div
                 key={row.id}
                 className={cn(
-                  "flex flex-row items-center w-full px-2 py-2 last:border-0 border-b-1 border-gray-200",
-                  { "cursor-pointer hover:bg-gray-100": !!row.onClick },
+                  "flex flex-row items-center w-full px-2 py-2 last:border-0 border-b-1 border-surface-border",
+                  { "cursor-pointer hover:bg-surface-hover": !!row.onClick },
                 )}
                 onClick={row.onClick}
               >
@@ -64,7 +64,7 @@ const List = ({
           })}
         </div>
       </div>
-      <div className="border-t-2 border-gray-300 bg-gray-100 px-2 py-1 flex flex-row items-center justify-between">
+      <div className="border-t-2 border-surface-border bg-surface px-2 py-1 flex flex-row items-center justify-between">
         <div>Total items: {totalItems}</div>
         <Pagination
           totalItems={totalItems}
