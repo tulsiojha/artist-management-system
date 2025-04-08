@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import artistService from "../services/artist.service";
+import artistService, { IArtist } from "../services/artist.service";
 import { generatePagination, getPageInfo, handleError } from "../utils/commons";
 import { validateArtist } from "../utils/validation-schema";
+import userService from "../services/user.service";
 
 const getById = async (req: Request, res: Response) => {
   try {
@@ -89,7 +90,45 @@ const deleteById = async (req: Request, res: Response) => {
     res.status(500).json({ data: null, error: handleError(err) });
   }
 };
+const createMany = async (req: Request, res: Response) => {
+  try {
+    const { artists } = req.body;
 
-const artistController = { getAll, getById, create, update, deleteById };
+    if (!artists || !Array.isArray(artists)) {
+      res.json({
+        data: { messge: "Invalid artist array." },
+        error: null,
+      });
+      return;
+    }
+
+    for (const artist of artists as IArtist[]) {
+      const [user] = await userService.getRole(artist.user_id);
+      console.log(user);
+      if (user?.[0].role !== "artist") {
+        throw Error(`Invalid role for artist user_id: ${artist.user_id}`);
+      }
+      validateArtist(artist);
+    }
+
+    await artistService.insertMany(artists);
+
+    res.json({
+      data: { messge: "Insert bulk artists successful" },
+      error: null,
+    });
+  } catch (err) {
+    res.status(500).json({ data: null, error: handleError(err) });
+  }
+};
+
+const artistController = {
+  getAll,
+  getById,
+  create,
+  update,
+  deleteById,
+  createMany,
+};
 
 export default artistController;

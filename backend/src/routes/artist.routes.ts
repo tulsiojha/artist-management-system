@@ -26,6 +26,13 @@ artistRouter.post(
   artistController.create,
 );
 
+/* create many a artist */
+artistRouter.post(
+  "/insert-many",
+  hasRole([USER_ROLE.ARTIST_MANAGER]),
+  artistController.createMany,
+);
+
 /* update a artist */
 artistRouter.post(
   "/:id",

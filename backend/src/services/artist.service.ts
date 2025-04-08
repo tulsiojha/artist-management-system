@@ -15,6 +15,7 @@ export interface IArtist extends RowDataPacket {
   gender?: GENDER;
   first_release_year: string;
   no_of_albums_released?: number;
+  user_id: string;
   created_at?: Date;
   updated_at?: Date;
 }
@@ -38,24 +39,61 @@ const findAll = (pI?: IPageInfo) => {
     .promise()
     .query<
       IArtist[]
-    >("SELECT id,name,dob,address,gender,first_release_year,no_of_albums_released,created_at,updated_at FROM artist LIMIT ? OFFSET ?;", [pI?.limit, pI?.offset]);
+    >("SELECT id, name, dob, address, gender, first_release_year, no_of_albums_released, user_id, created_at, updated_at FROM artist LIMIT ? OFFSET ?;", [pI?.limit, pI?.offset]);
 };
 
 /* create a artist */
-const insertOne = ({ id, updated_at, ...props }: IArtist) => {
-  const data = { ...props, created_at: new Date() };
-  return db.promise().query<ResultSetHeader>("INSERT INTO artist SET ?;", data);
+const insertOne = (props: IArtist) => {
+  const {
+    name,
+    gender,
+    dob,
+    address,
+    first_release_year,
+    no_of_albums_released,
+    user_id,
+  } = props;
+  return db
+    .promise()
+    .query<ResultSetHeader>(
+      "INSERT INTO artist (name, gender, dob, address, first_release_year, no_of_albums_released, user_id) VALUES (?, ?, ?, ?, ?, ?, ?);",
+      [
+        name,
+        gender,
+        dob,
+        address,
+        first_release_year,
+        no_of_albums_released,
+        user_id,
+      ],
+    );
 };
 
 /* update a artist */
-const updateOne = (
-  { id: i, created_at, email, ...props }: IArtist,
-  id: string,
-) => {
-  const data = { ...props, updated_at: new Date() };
+const updateOne = (props: IArtist, id: string) => {
+  const {
+    name,
+    gender,
+    dob,
+    address,
+    first_release_year,
+    no_of_albums_released,
+  } = props;
   return db
     .promise()
-    .query<ResultSetHeader>("UPDATE artist SET ? WHERE id = ?;", [data, id]);
+    .query<ResultSetHeader>(
+      "UPDATE artist SET name = ?, gender = ?, dob = ?, address = ?, first_release_year = ?, no_of_albums_released = ?, updated_at = ? WHERE id = ?;",
+      [
+        name,
+        gender,
+        dob,
+        address,
+        first_release_year,
+        no_of_albums_released,
+        new Date(),
+        id,
+      ],
+    );
 };
 
 /* delete a artist by id */
@@ -65,6 +103,26 @@ const deleteById = ({ id }: { id: string }) => {
     .query<ResultSetHeader>("DELETE FROM artist WHERE id = ?;", [id]);
 };
 
+/* create a artist */
+const insertMany = (props: IArtist[]) => {
+  const values = props.map((v) => [
+    v.name,
+    v.gender,
+    v.dob,
+    v.address,
+    v.first_release_year,
+    v.no_of_albums_released,
+    v.user_id,
+  ]);
+
+  return db
+    .promise()
+    .query<ResultSetHeader>(
+      "INSERT INTO artist (name, gender, dob, address, first_release_year, no_of_albums_released, user_id) VALUES ?;",
+      [values],
+    );
+};
+
 const artistService = {
   findOneById,
   findAll,
@@ -72,6 +130,7 @@ const artistService = {
   updateOne,
   deleteById,
   getTotalCount,
+  insertMany,
 };
 
 export default artistService;

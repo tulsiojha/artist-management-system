@@ -56,9 +56,14 @@ const findAllByArtist = (artist: string, pI?: IPageInfo) => {
 };
 
 /* create a song */
-const insertOne = ({ id, updated_at, ...props }: ISong) => {
-  const data = { ...props, created_at: new Date() };
-  return db.promise().query<ResultSetHeader>("INSERT INTO song SET ?;", data);
+const insertOne = (props: ISong) => {
+  const { title, album_name, genre, artist_id } = props;
+  return db
+    .promise()
+    .query<ResultSetHeader>(
+      "INSERT INTO song (title, album_name, genre, artist_id) VALUES (?, ?, ?, ?);",
+      [title, album_name, genre, artist_id],
+    );
 };
 
 /* update a song */
@@ -66,10 +71,13 @@ const updateOne = (
   { id: i, created_at, email, ...props }: ISong,
   id: string,
 ) => {
-  const data = { ...props, updated_at: new Date() };
+  const { title, album_name, genre, artist_id } = props;
   return db
     .promise()
-    .query<ResultSetHeader>("UPDATE song SET ? WHERE id = ?;", [data, id]);
+    .query<ResultSetHeader>(
+      "UPDATE song SET title = ?, album_name = ?, genre = ?, artist_id = ?, updated_at = ? WHERE id = ?;",
+      [title, album_name, genre, artist_id, new Date(), id],
+    );
 };
 
 /* delete a song by id */

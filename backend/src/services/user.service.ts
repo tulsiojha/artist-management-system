@@ -34,6 +34,12 @@ const getTotalCount = () => {
     .query<IPageResult[]>("SELECT COUNT(*) AS total FROM user;");
 };
 
+const getRole = (id: string) => {
+  return db
+    .promise()
+    .query<IUser[]>("SELECT role FROM user WHERE id = ? ;", [id]);
+};
+
 /* query user by id */
 const findOneById = ({ id }: { id: string }) => {
   return db
@@ -49,7 +55,7 @@ const findAll = (pI?: IPageInfo) => {
     .promise()
     .query<
       IUser[]
-    >("SELECT id,first_name,last_name,dob,email,address,phone,gender,role,created_at,updated_at FROM user LIMIT ? OFFSET ?;", [pI?.limit, pI?.offset]);
+    >("SELECT id, first_name, last_name, dob, email, address, phone, gender, role, created_at, updated_at FROM user LIMIT ? OFFSET ?;", [pI?.limit, pI?.offset]);
 };
 
 /* query all user */
@@ -72,19 +78,54 @@ const findOneByEmail = ({ email }: { email: string }) => {
 
 /* create a user */
 const insertOne = ({ id, updated_at, ...props }: IUser) => {
-  const data = { ...props, created_at: new Date() };
-  return db.promise().query<ResultSetHeader>("INSERT INTO user SET ?;", data);
+  const {
+    first_name,
+    last_name,
+    email,
+    password,
+    phone,
+    dob,
+    gender,
+    address,
+    role,
+  } = props;
+  return db
+    .promise()
+    .query<ResultSetHeader>(
+      "INSERT INTO user (first_name, last_name, email, password, phone, dob, gender, address, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
+      [
+        first_name,
+        last_name,
+        email,
+        password,
+        phone,
+        dob,
+        gender,
+        address,
+        role,
+      ],
+    );
 };
 
 /* update a user */
-const updateOne = (
-  { id: i, created_at, email, ...props }: IUser,
-  id: string,
-) => {
-  const data = { ...props, updated_at: new Date() };
+const updateOne = (props: IUser, id: string) => {
+  const { first_name, last_name, phone, dob, gender, address, role } = props;
   return db
     .promise()
-    .query<ResultSetHeader>("UPDATE user SET ? WHERE id = ?;", [data, id]);
+    .query<ResultSetHeader>(
+      "UPDATE user SET first_name = ?, last_name = ?, phone = ?, dob = ?, gender = ?, address = ?, role = ?, updated_at = ? WHERE id = ?",
+      [
+        first_name,
+        last_name,
+        phone,
+        dob,
+        gender,
+        address,
+        role,
+        new Date(),
+        id,
+      ],
+    );
 };
 
 /* delete a user by id */
@@ -103,6 +144,7 @@ const userService = {
   deleteById,
   getTotalCount,
   findArtistUsers,
+  getRole,
 };
 
 export default userService;
