@@ -60,19 +60,31 @@ const Artists = ({ data }: IArtistResponse) => {
         }}
         page={Number(page || 1)}
         columns={[
-          { id: "name", label: "Full name", width: "200px" },
-          { id: "gender", label: "Gender", width: "180px" },
+          {
+            id: "name",
+            label: "Full name",
+            className: "w-[150px] md:w-[200px]",
+          },
+          {
+            id: "gender",
+            label: "Gender",
+            className: "w-[80px] md:w-[200px]",
+          },
           {
             id: "first_release_year",
             label: "First release year",
-            width: "180px",
+            className: "w-[180px] md:w-[200px]",
           },
           {
             id: "no_of_albums_released",
             label: "No of albums",
             width: "180px",
           },
-          { id: "created_at", label: "Created At", width: "180px" },
+          {
+            id: "created_at",
+            label: "Created At",
+            className: "w-[100px] md:w-[200px]",
+          },
           ...(isArtistManager ? [{ id: "actions", label: "Actions" }] : []),
         ]}
         rows={data.artists.map((art) => ({

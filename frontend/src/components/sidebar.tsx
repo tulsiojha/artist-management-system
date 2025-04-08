@@ -6,9 +6,8 @@ import useAuth from "@/hooks/use-auth";
 import { useCallback } from "react";
 import { ShieldUser, Users } from "lucide-react";
 import ProfileMenu from "./profile-menu";
-import { USER_ROLE } from "@/utils/types";
 
-const items = [
+export const menuItems = [
   {
     name: "Users",
     icon: <Users size={16} />,
@@ -32,11 +31,11 @@ const Sidebar = () => {
   const user = useAuth();
   const pathname = usePathname();
   const roleItems = useCallback(
-    () => items.filter((i) => i.roles.includes(user?.role!)),
+    () => menuItems.filter((i) => i.roles.includes(user?.role!)),
     [user],
   );
   return (
-    <nav className="flex flex-col px-4 bg-tertiary">
+    <nav className="hidden flex-col px-4 bg-tertiary lg:flex">
       <div className="font-bold text-2xl py-5 flex items-center text-primary">
         AMS
       </div>

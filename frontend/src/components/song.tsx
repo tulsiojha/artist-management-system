@@ -49,14 +49,22 @@ const Songs = ({ data }: { data: ISongResponse["data"]; artist?: number }) => {
         }}
         page={Number(page || 1)}
         columns={[
-          { id: "name", label: "Name", width: "200px" },
-          { id: "album_name", label: "Album", width: "180px" },
+          { id: "name", label: "Name", className: "w-[150px] md:w-[200px]" },
+          {
+            id: "album_name",
+            label: "Album",
+            className: "w-[110px] md:w-[180px]",
+          },
           {
             id: "genre",
             label: "Genre",
             width: "180px",
           },
-          { id: "created_at", label: "Created At", width: "180px" },
+          {
+            id: "created_at",
+            label: "Created At",
+            className: "w-[100px] md:w-[180px]",
+          },
           ...(isArtist ? [{ id: "actions", label: "Actions" }] : []),
         ]}
         rows={data.songs.map((song) => ({

@@ -25,12 +25,15 @@ const List = ({
 }) => {
   return (
     <div className="w-full flex flex-col flex-1 rounded border-2 border-surface-border overflow-hidden">
-      <div className="flex flex-row items-center w-full px-2 py-2 border-b-2 border-surface-border bg-surface text-gray-600 font-bold text-sm">
+      <div className="flex flex-row items-center w-full px-2 py-2 border-b-2 border-surface-border bg-surface text-gray-600 font-bold text-sm ">
         {columns.map((col) => {
           return (
             <div
               key={col.id}
-              className={cn(col.className, "mr-3")}
+              className={cn(
+                col.className,
+                "mr-3 nth-[n+3]:hidden md:nth-[n+3]:flex md:nth-[n+4]:hidden lg:nth-[n+4]:flex last:!flex",
+              )}
               style={{ width: col.width }}
             >
               {col.label}
@@ -53,7 +56,10 @@ const List = ({
                 {columns.map((col) => (
                   <div
                     key={col.id}
-                    className={cn(col.className, "line-clamp-1 mr-3")}
+                    className={cn(
+                      col.className,
+                      "line-clamp-1 mr-3 nth-[n+3]:hidden md:nth-[n+3]:flex md:nth-[n+4]:hidden lg:nth-[n+4]:flex last:!flex",
+                    )}
                     style={{ width: col.width }}
                   >
                     {row.columns[col.id]?.render()}

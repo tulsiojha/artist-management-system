@@ -44,7 +44,7 @@ const FormModal = <T extends z.ZodSchema<any>>({
       height={height}
     >
       <form
-        className="flex flex-col h-full overflow-y-auto p-3"
+        className="flex flex-col h-full overflow-y-auto overflow-x-hidden md:overflow-x-auto p-3"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         {children?.(form)}

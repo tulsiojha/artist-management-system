@@ -26,6 +26,7 @@ const Button = ({
             variant === "danger",
           "w-full": block,
         },
+        props.className,
       )}
       disabled={loading || props.disabled}
     >
