@@ -82,7 +82,7 @@ const updateOne = (props: IArtist, id: string) => {
   return db
     .promise()
     .query<ResultSetHeader>(
-      "UPDATE artist SET name = ?, gender = ?, dob = ?, address = ?, first_release_year = ?, no_of_albums_released = ?, updated_at = ? WHERE id = ?;",
+      "UPDATE artist SET name = ?, gender = ?, dob = ?, address = ?, first_release_year = ?, no_of_albums_released = ? WHERE id = ?;",
       [
         name,
         gender,
@@ -90,7 +90,6 @@ const updateOne = (props: IArtist, id: string) => {
         address,
         first_release_year,
         no_of_albums_released,
-        new Date(),
         id,
       ],
     );

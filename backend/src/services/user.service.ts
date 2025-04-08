@@ -40,6 +40,14 @@ const getRole = (id: string) => {
     .query<IUser[]>("SELECT role FROM user WHERE id = ? ;", [id]);
 };
 
+const checkIfArtistExist = (id: string) => {
+  return db
+    .promise()
+    .query<
+      IUser[]
+    >("SELECT u.role AS role, a.id AS artist_id FROM user u LEFT JOIN artist a ON u.id = a.user_id  WHERE u.id = ?;", [id]);
+};
+
 /* query user by id */
 const findOneById = ({ id }: { id: string }) => {
   return db
@@ -77,7 +85,7 @@ const findOneByEmail = ({ email }: { email: string }) => {
 };
 
 /* create a user */
-const insertOne = ({ id, updated_at, ...props }: IUser) => {
+const insertOne = (props: IUser) => {
   const {
     first_name,
     last_name,
@@ -113,18 +121,8 @@ const updateOne = (props: IUser, id: string) => {
   return db
     .promise()
     .query<ResultSetHeader>(
-      "UPDATE user SET first_name = ?, last_name = ?, phone = ?, dob = ?, gender = ?, address = ?, role = ?, updated_at = ? WHERE id = ?",
-      [
-        first_name,
-        last_name,
-        phone,
-        dob,
-        gender,
-        address,
-        role,
-        new Date(),
-        id,
-      ],
+      "UPDATE user SET first_name = ?, last_name = ?, phone = ?, dob = ?, gender = ?, address = ?, role = ? WHERE id = ?",
+      [first_name, last_name, phone, dob, gender, address, role, id],
     );
 };
 
@@ -145,6 +143,7 @@ const userService = {
   getTotalCount,
   findArtistUsers,
   getRole,
+  checkIfArtistExist,
 };
 
 export default userService;

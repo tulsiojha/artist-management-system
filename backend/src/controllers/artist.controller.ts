@@ -103,10 +103,13 @@ const createMany = async (req: Request, res: Response) => {
     }
 
     for (const artist of artists as IArtist[]) {
-      const [user] = await userService.getRole(artist.user_id);
-      console.log(user);
-      if (user?.[0].role !== "artist") {
+      const [user] = await userService.checkIfArtistExist(artist.user_id);
+      const u = user?.[0];
+      if (u.role !== "artist") {
         throw Error(`Invalid role for artist user_id: ${artist.user_id}`);
+      }
+      if (!!u.artist_id) {
+        throw Error(`Artist already exist for user: ${artist.user_id}`);
       }
       validateArtist(artist);
     }

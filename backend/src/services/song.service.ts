@@ -75,8 +75,8 @@ const updateOne = (
   return db
     .promise()
     .query<ResultSetHeader>(
-      "UPDATE song SET title = ?, album_name = ?, genre = ?, artist_id = ?, updated_at = ? WHERE id = ?;",
-      [title, album_name, genre, artist_id, new Date(), id],
+      "UPDATE song SET title = ?, album_name = ?, genre = ?, artist_id = ? WHERE id = ?;",
+      [title, album_name, genre, artist_id, id],
     );
 };
 
