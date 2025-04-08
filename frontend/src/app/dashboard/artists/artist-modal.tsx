@@ -11,10 +11,9 @@ import handleErrors from "@/utils/handleErrors";
 import { formatDateToString } from "@/utils/commons";
 import { Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { use, useEffect, useState } from "react";
-import { user } from "@/lib/api";
+import { useEffect, useState } from "react";
 
-const baseSchema = z.object({
+export const baseSchema = z.object({
   name: z.string().min(2, "must be atleast 2 characters"),
   dob: z.date(),
   gender: z.nativeEnum(GENDER, {
@@ -100,21 +99,27 @@ const ArtistModal = ({
 
       if (update) {
         await axios.post(`/backend/artist/${initialValues.id}`, payload);
+        toast.success("Artist updated successfully", {
+          richColors: true,
+          closeButton: true,
+        });
       } else {
         //@ts-ignore
         await axios.post("/backend/artist/", payload);
+        toast.success("Artist created successfully", {
+          richColors: true,
+          closeButton: true,
+        });
       }
 
-      toast.success("Artist created successfully", {
-        richColors: true,
-        closeButton: true,
-      });
       openChange?.(false);
       router.refresh();
     } catch (err) {
       toast.error(handleErrors(err), { richColors: true, closeButton: true });
     }
   };
+
+  console.log(initialValues);
 
   return (
     <FormModal

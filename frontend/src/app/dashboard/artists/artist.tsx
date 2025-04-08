@@ -13,6 +13,7 @@ import ArtistModal from "./artist-modal";
 import ActionBar from "@/components/action-bar";
 import Button from "@/components/button";
 import useAuth from "@/hooks/use-auth";
+import CSVModal from "@/components/csv-modal";
 
 const Artists = ({ data }: IArtistResponse) => {
   const router = useRouter();
@@ -24,6 +25,7 @@ const Artists = ({ data }: IArtistResponse) => {
 
   const [dataModalOpen, setDataModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [csvModalOpen, setCSVModalOpen] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState<IArtist | undefined>();
   return (
     <div className="p-2 flex flex-col">
@@ -31,17 +33,16 @@ const Artists = ({ data }: IArtistResponse) => {
         title="Artists"
         action={
           isArtistManager ? (
-            <div>
+            <div className="flex flex-row items-center gap-2">
               <Button
                 variant="secondary"
                 onClick={() => {
-                  setSelectedArtist(undefined);
-                  setDataModalOpen(true);
+                  setCSVModalOpen(true);
                 }}
               >
                 <FileArchive size={14} />
                 Import CSV
-              </Button>{" "}
+              </Button>
               <Button
                 onClick={() => {
                   setSelectedArtist(undefined);
@@ -129,6 +130,13 @@ const Artists = ({ data }: IArtistResponse) => {
         openChange={() => {
           setSelectedArtist(undefined);
           setDataModalOpen(false);
+        }}
+      />
+      <CSVModal
+        open={csvModalOpen}
+        openChange={() => setCSVModalOpen(false)}
+        onSubmit={async (data) => {
+          console.log(data);
         }}
       />
       <DeleteModal

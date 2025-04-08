@@ -32,6 +32,7 @@ const PageButton = (
 ) => {
   return (
     <button
+      type="button"
       {...props}
       className={cn(
         "outline-none border-1 border-gray-300 px-2 py-0.5 font-mono cursor-pointer disabled:bg-gray-200 disabled:cursor-not-allowed",

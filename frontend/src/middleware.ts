@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 const pages: Record<string, string[]> = {
   "/dashboard/users/": ["super_admin"],
   "/dashboard/artists/": ["super_admin", "artist_manager"],
-  "/dashboard/songs/": ["super_admin", "artist_manager", "artist"],
+  "/dashboard/songs/": ["artist"],
 };
 
 /* redirect urls for specific role */

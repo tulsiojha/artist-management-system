@@ -62,6 +62,7 @@ export interface IArtist {
   no_of_albums_released?: number;
   created_at?: Date;
   updated_at?: Date;
+  user_id?: number;
 }
 
 export type IArtistResponse = {

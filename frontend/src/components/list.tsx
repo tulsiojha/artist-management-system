@@ -30,7 +30,7 @@ const List = ({
           return (
             <div
               key={col.id}
-              className={col.className}
+              className={cn(col.className, "mr-3")}
               style={{ width: col.width }}
             >
               {col.label}
@@ -53,7 +53,7 @@ const List = ({
                 {columns.map((col) => (
                   <div
                     key={col.id}
-                    className={col.className}
+                    className={cn(col.className, "line-clamp-1 mr-3")}
                     style={{ width: col.width }}
                   >
                     {row.columns[col.id]?.render()}

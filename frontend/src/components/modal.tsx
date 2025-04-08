@@ -23,7 +23,7 @@ const Modal = ({
   return (
     <div className="fixed inset-0 bg-black/35 h-full w-full flex items-center justify-center">
       <div
-        className="grid grid-rows-[60px_auto] bg-white rounded border-1 border-gray-200 shadow-xl"
+        className="grid grid-rows-[60px_auto] bg-white rounded border-1 border-gray-200 shadow-xl transition-all"
         style={{ height: height || "80vh", width: width || "500px" }}
       >
         <div className="h-[60px] border-b-1 border-gray-300 bg-gray-200 flex flex-row items-center justify-between">
