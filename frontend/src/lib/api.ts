@@ -9,12 +9,9 @@ import {
 } from "@/utils/types";
 import { redirect } from "next/navigation";
 
-export const baseUrl = process.env.BACKEND_URL;
-
 export const currentUser = async () => {
   try {
-    const res = await queryServer(`${baseUrl}/auth/currentuser`);
-    console.log(res);
+    const res = await queryServer("/auth/currentuser");
     if (!res || res?.error) {
       return null;
     }
@@ -39,16 +36,14 @@ export const ensureLoggedIn = async () => {
 const user = {
   list: async (page = 1, limit = PAGINATION_LIMIT) => {
     return (await queryServer(
-      `${baseUrl}/user?limit=${limit}&page=${page}`,
+      `/user?limit=${limit}&page=${page}`,
     )) as IUserResponse;
   },
   one: async (id: string) => {
-    return await queryServer(`${baseUrl}/user/${id}`);
+    return await queryServer(`/user/${id}`);
   },
   unlinkedUsers: async () => {
-    return (await queryServer(
-      `${baseUrl}/user/unlinked-users`,
-    )) as IUnlinkedUserResponse;
+    return (await queryServer(`/user/unlinked-users`)) as IUnlinkedUserResponse;
   },
 };
 
@@ -56,11 +51,11 @@ const user = {
 const artist = {
   list: async (page = 1, limit = PAGINATION_LIMIT) => {
     return (await queryServer(
-      `${baseUrl}/artist?limit=${limit}&page=${page}`,
+      `/artist?limit=${limit}&page=${page}`,
     )) as IArtistResponse;
   },
   one: async (id: string) => {
-    return await queryServer(`${baseUrl}/artist/${id}`);
+    return await queryServer(`/artist/${id}`);
   },
 };
 
@@ -68,16 +63,16 @@ const artist = {
 const song = {
   list: async (page = 1, limit = PAGINATION_LIMIT) => {
     return (await queryServer(
-      `${baseUrl}/song?limit=${limit}&page=${page}`,
+      `/song?limit=${limit}&page=${page}`,
     )) as ISongResponse;
   },
   listByArtist: async (id?: number, page = 1, limit = PAGINATION_LIMIT) => {
     return (await queryServer(
-      `${baseUrl}/song/getAllByArtist/${id}?limit=${limit}&page=${page}`,
+      `/song/getAllByArtist/${id}?limit=${limit}&page=${page}`,
     )) as ISongResponse;
   },
   one: async (id: string) => {
-    return await queryServer(`${baseUrl}/song/${id}`);
+    return await queryServer(`/song/${id}`);
   },
 };
 
