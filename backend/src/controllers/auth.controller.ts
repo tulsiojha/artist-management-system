@@ -24,7 +24,7 @@ const login = async (req: Request, res: Response) => {
         res.cookie("role", user[0].role, {
           secure: false,
           httpOnly: true,
-          expires: new Date(Date.now() + 100 * 60 * 1000), //
+          expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // expires in 1 day
         });
         res.json({ data: { email }, error: null });
         return;
