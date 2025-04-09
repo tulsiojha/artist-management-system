@@ -1,7 +1,7 @@
 "use client";
 import DeleteModal from "@/components/delete-modal";
 import List from "@/components/list";
-import { exportCSV, formatDate, genders } from "@/utils/commons";
+import { exportCSV, formatDate, genders, getParams } from "@/utils/commons";
 import { IArtist, IArtistResponse, USER_ROLE } from "@/utils/types";
 import { Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -14,11 +14,12 @@ import CSVModal from "@/components/csv-modal";
 import SettingMenu from "@/components/setting-menu";
 import { artist } from "@/lib/api-client";
 import ItemAction from "@/components/item-action";
+import { PAGINATION_LIMIT } from "@/utils/constants";
 
 const Artists = ({ data }: IArtistResponse) => {
   const router = useRouter();
   const sp = useSearchParams();
-  const page = sp.get("page");
+  const [page, limit] = [sp.get("page"), sp.get("limit")];
 
   const user = useAuth();
   const isArtistManager = user?.role === USER_ROLE.ARTIST_MANAGER;
@@ -55,10 +56,14 @@ const Artists = ({ data }: IArtistResponse) => {
       />
       <List
         totalItems={data.pageInfo.total}
-        onPageChanged={(p) => {
-          router.push(`/dashboard/users/?page=${p}`);
-        }}
         page={Number(page || 1)}
+        onPageChanged={(p) => {
+          router.push(getParams("page", p, sp));
+        }}
+        perPage={Number(limit) || PAGINATION_LIMIT}
+        onLimitChanged={(e) => {
+          router.push(getParams("limit", e, sp));
+        }}
         columns={[
           {
             id: "name",
@@ -107,15 +112,19 @@ const Artists = ({ data }: IArtistResponse) => {
                   actions: {
                     render: () => (
                       <ItemAction
-                        onDelete={(e) => {
-                          e.stopPropagation();
-                          setSelectedArtist(art);
-                          setDeleteModalOpen(true);
+                        deleteProps={{
+                          onClick: (e) => {
+                            e.stopPropagation();
+                            setSelectedArtist(art);
+                            setDeleteModalOpen(true);
+                          },
                         }}
-                        onEdit={(e) => {
-                          e.stopPropagation();
-                          setSelectedArtist(art);
-                          setDataModalOpen(true);
+                        editProps={{
+                          onClick: (e) => {
+                            e.stopPropagation();
+                            setSelectedArtist(art);
+                            setDataModalOpen(true);
+                          },
                         }}
                       />
                     ),

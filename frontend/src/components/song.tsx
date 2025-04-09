@@ -1,7 +1,7 @@
 "use client";
 import DeleteModal from "@/components/delete-modal";
 import List from "@/components/list";
-import { formatDate } from "@/utils/commons";
+import { formatDate, getParams } from "@/utils/commons";
 import { ISong, ISongResponse, USER_ROLE } from "@/utils/types";
 import { Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -12,11 +12,12 @@ import useAuth from "@/hooks/use-auth";
 import SongModal from "./song-modal";
 import { song } from "@/lib/api-client";
 import ItemAction from "./item-action";
+import { PAGINATION_LIMIT } from "@/utils/constants";
 
 const Songs = ({ data }: { data: ISongResponse["data"]; artist?: number }) => {
   const router = useRouter();
   const sp = useSearchParams();
-  const page = sp.get("page");
+  const [page, limit] = [sp.get("page"), sp.get("limit")];
 
   const user = useAuth();
   const isArtist = user?.role === USER_ROLE.ARTIST;
@@ -44,10 +45,14 @@ const Songs = ({ data }: { data: ISongResponse["data"]; artist?: number }) => {
       />
       <List
         totalItems={data.pageInfo.total}
-        onPageChanged={(p) => {
-          router.push(`/dashboard/songs/?page=${p}`);
-        }}
         page={Number(page || 1)}
+        onPageChanged={(p) => {
+          router.push(getParams("page", p, sp));
+        }}
+        perPage={Number(limit) || PAGINATION_LIMIT}
+        onLimitChanged={(e) => {
+          router.push(getParams("limit", e, sp));
+        }}
         columns={[
           { id: "name", label: "Name", className: "w-[150px] md:w-[200px]" },
           {
@@ -79,13 +84,17 @@ const Songs = ({ data }: { data: ISongResponse["data"]; artist?: number }) => {
                   actions: {
                     render: () => (
                       <ItemAction
-                        onDelete={() => {
-                          setSelectedSong(song);
-                          setDeleteModalOpen(true);
+                        deleteProps={{
+                          onClick: () => {
+                            setSelectedSong(song);
+                            setDeleteModalOpen(true);
+                          },
                         }}
-                        onEdit={() => {
-                          setSelectedSong(song);
-                          setDataModalOpen(true);
+                        editProps={{
+                          onClick: () => {
+                            setSelectedSong(song);
+                            setDataModalOpen(true);
+                          },
                         }}
                       />
                     ),

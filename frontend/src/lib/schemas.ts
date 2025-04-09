@@ -7,7 +7,7 @@ const userBaseSchema = {
   last_name: z.string().min(2, "must be atleast 2 characters"),
   email: z.string().email("invalid email"),
   phone: z.string().min(2, "must be atleast 2 characters"),
-  dob: z.date(),
+  dob: z.date().max(new Date()),
   gender: z.nativeEnum(GENDER, {
     errorMap: (issue) => {
       switch (issue.code) {

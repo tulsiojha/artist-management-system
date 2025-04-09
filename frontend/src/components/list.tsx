@@ -2,13 +2,15 @@
 import { PAGINATION_LIMIT } from "@/utils/constants";
 import Pagination from "./pagination";
 import { ReactNode } from "react";
-import { cn } from "@/utils/commons";
+import { cn, perPageItems } from "@/utils/commons";
+import Select from "./select";
 
 const List = ({
   rows,
   columns,
   totalItems,
   onPageChanged,
+  onLimitChanged,
   page = 1,
   perPage = PAGINATION_LIMIT,
 }: {
@@ -20,6 +22,7 @@ const List = ({
   columns: { className?: string; width?: string; label: string; id: string }[];
   totalItems: number;
   onPageChanged?: (page: number) => void;
+  onLimitChanged?: (limit: string) => void;
   page?: number;
   perPage?: number;
 }) => {
@@ -42,7 +45,7 @@ const List = ({
         })}
       </div>
       <div className="w-full flex-1 relative">
-        <div className="flex flex-col w-full h-full inset-0 absolute">
+        <div className="flex flex-col w-full h-full inset-0 absolute overflow-y-scroll">
           {rows.map((row) => {
             return (
               <div
@@ -71,7 +74,19 @@ const List = ({
         </div>
       </div>
       <div className="border-t-2 border-surface-border bg-surface px-2 py-1 flex flex-row items-center justify-between">
-        <div>Total items: {totalItems}</div>
+        <div className="hidden flex-row items-center justify-center gap-5 md:flex">
+          <div className="flex shrink-0">Total items: {totalItems}</div>
+          <div className="flex flex-row items-center justify-center gap-2">
+            <div className="flex shrink-0">Items per page:</div>
+            <Select
+              items={perPageItems.map((ppi) => ({ label: ppi, value: ppi }))}
+              value={perPage}
+              onChange={({ target: { value } }) => {
+                onLimitChanged?.(value || `${PAGINATION_LIMIT}`);
+              }}
+            />
+          </div>
+        </div>
         <Pagination
           totalItems={totalItems}
           page={page}

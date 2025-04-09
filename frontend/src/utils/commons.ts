@@ -3,6 +3,8 @@ import csvParser from "papaparse";
 import { queryClient } from "./query-client";
 import handleErrors from "./handleErrors";
 import { toast as t } from "sonner";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { ReadonlyURLSearchParams } from "next/navigation";
 
 export const cn = classnames;
 
@@ -56,6 +58,18 @@ export const genders = [
     value: "o",
   },
 ];
+
+export const perPageItems = [5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+
+export const getParams = (
+  label: string,
+  value: string | number,
+  searchParams: ReadonlyURLSearchParams,
+) => {
+  const params = new URLSearchParams(searchParams.toString());
+  params.set(label, `${value}`);
+  return `?${params.toString()}`;
+};
 
 export const formatDate = (date?: string | Date) =>
   date

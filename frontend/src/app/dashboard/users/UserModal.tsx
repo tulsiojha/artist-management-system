@@ -116,15 +116,15 @@ const UserModal = ({
                 {...register("address")}
               />
               <Select label="Role" items={roles} {...register("role")} />
-              <TextInput
-                label="Email"
-                placeholder="Enter your email address"
-                type="email"
-                error={errors.email?.message}
-                {...register("email")}
-              />
               {update ? null : (
                 <>
+                  <TextInput
+                    label="Email"
+                    placeholder="Enter your email address"
+                    type="email"
+                    error={errors.email?.message}
+                    {...register("email")}
+                  />
                   <TextInput
                     label="Password"
                     placeholder="Enter password"

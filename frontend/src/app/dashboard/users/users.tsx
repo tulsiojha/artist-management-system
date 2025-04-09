@@ -2,7 +2,7 @@
 import ActionBar from "@/components/action-bar";
 import Button from "@/components/button";
 import List from "@/components/list";
-import { formatDate, genders, roles } from "@/utils/commons";
+import { formatDate, genders, getParams, roles } from "@/utils/commons";
 import { IUser, IUserResponse } from "@/utils/types";
 import { Plus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -11,11 +11,14 @@ import UserModal from "./UserModal";
 import DeleteModal from "@/components/delete-modal";
 import { user } from "@/lib/api-client";
 import ItemAction from "@/components/item-action";
+import { PAGINATION_LIMIT } from "@/utils/constants";
+import useAuth from "@/hooks/use-auth";
 
 const Users = ({ data }: IUserResponse) => {
   const router = useRouter();
+  const authUser = useAuth();
   const sp = useSearchParams();
-  const page = sp.get("page");
+  const [page, limit] = [sp.get("page"), sp.get("limit")];
 
   const [dataModalOpen, setDataModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -39,10 +42,14 @@ const Users = ({ data }: IUserResponse) => {
       />
       <List
         totalItems={data.pageInfo.total}
+        page={Number(page) || 1}
         onPageChanged={(p) => {
-          router.push(`/dashboard/users/?page=${p}`);
+          router.push(getParams("page", p, sp));
         }}
-        page={Number(page || 1)}
+        perPage={Number(limit) || PAGINATION_LIMIT}
+        onLimitChanged={(e) => {
+          router.push(getParams("limit", e, sp));
+        }}
         columns={[
           { id: "id", label: "User Id", width: "80px" },
           { id: "name", label: "Full name", width: "200px" },
@@ -68,13 +75,18 @@ const Users = ({ data }: IUserResponse) => {
             actions: {
               render: () => (
                 <ItemAction
-                  onDelete={() => {
-                    setSelectedUser(user);
-                    setDeleteModalOpen(true);
+                  deleteProps={{
+                    disabled: user.id === authUser?.id,
+                    onClick: () => {
+                      setSelectedUser(user);
+                      setDeleteModalOpen(true);
+                    },
                   }}
-                  onEdit={() => {
-                    setSelectedUser(user);
-                    setDataModalOpen(true);
+                  editProps={{
+                    onClick: () => {
+                      setSelectedUser(user);
+                      setDataModalOpen(true);
+                    },
                   }}
                 />
               ),

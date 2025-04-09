@@ -7,7 +7,8 @@ const UserPage = async ({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const page = Number((await searchParams).page) || 0;
-  const users = await user.list(page);
+  const limit = Number((await searchParams).limit) || 0;
+  const users = await user.list(page, limit);
   return <Users data={users.data} />;
 };
 
