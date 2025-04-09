@@ -45,6 +45,11 @@ const List = ({
         })}
       </div>
       <div className="w-full flex-1 relative">
+        {rows.length === 0 ? (
+          <div className="absolute inset-0 text-lg text-black/50 font-bold flex items-center justify-center z-1">
+            List is empty.
+          </div>
+        ) : null}
         <div className="flex flex-col w-full h-full inset-0 absolute overflow-y-scroll">
           {rows.map((row) => {
             return (
